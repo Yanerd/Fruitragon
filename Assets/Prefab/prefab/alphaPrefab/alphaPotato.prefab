@@ -505,6 +505,7 @@ MonoBehaviour:
   Stem: {fileID: 101702627930993286}
   Dragon: {fileID: 7730504636497394127}
   Effect: {fileID: 3148877968566268699}
+  fruit: []
   onWater: 0
 --- !u!54 &3903556913843175510
 Rigidbody:
@@ -530,7 +531,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 355246628511526353}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.10181044, y: 0.06613203, z: 0.06222054}
