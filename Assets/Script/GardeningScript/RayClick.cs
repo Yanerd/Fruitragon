@@ -18,13 +18,14 @@ public class RayClick : MonoBehaviour
     [SerializeField] GameObject WellPrefab;
     [Header("AlphaPrefab_List")]
     [SerializeField] GameObject[] all_Alpha_Prefab;
-
+    CursorChange myCursor;
 
     private int mask; //cullingMask plag Save Value
     private Vector3 FirstRayPosition; //FirstRay hit point Position
 
     private void Awake()
     {
+        myCursor = FindObjectOfType<CursorChange>();
         mask = Camera.main.cullingMask = (1 << 9);
         ObjectPoolingManager.inst.inst_AlphaPrefab(all_Alpha_Prefab);
     }
@@ -36,6 +37,26 @@ public class RayClick : MonoBehaviour
 
     void Update()
     {
+
+
+        if (ButtonManager.inst.buildingMode == true)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            Debug.DrawRay(ray.origin, ray.direction * 1000, Color.green);
+            if (Physics.Raycast(ray, out hit, 1000f))
+            {
+                Debug.Log(hit.transform.tag);
+
+                if (hit.transform.tag == "Weapon")
+                {
+                    Debug.Log("Wow");
+                    myCursor.noBuildingZoneCursor();
+                }
+            }
+        }
+
+
         if (ButtonManager.inst.buildingMode == true &&
             (ButtonManager.inst.OnHouse == true ||
             ButtonManager.inst.OnWell == true ||
@@ -50,6 +71,8 @@ public class RayClick : MonoBehaviour
             Debug.DrawRay(ray.origin, ray.direction * 1000, Color.green);
             if (Physics.Raycast(ray, out hit, 100f, mask))
             {
+                
+
                 if (FirstRayPosition == Vector3.zero)
                 {
                     FirstRayPosition = hit.transform.position;
@@ -59,6 +82,8 @@ public class RayClick : MonoBehaviour
                     ObjectPoolingManager.inst.Objectapperear(hit.transform.position);
                     FirstRayPosition = hit.transform.position;
                 }
+                
+
                 if (Input.GetMouseButtonDown(0))
                 {
                     Debug.Log("설치가능해요");
@@ -107,6 +132,8 @@ public class RayClick : MonoBehaviour
                         ObjectPoolingManager.inst.Instantiate(EggplantPrefab, hit.transform.position, Quaternion.identity, ObjectPoolingManager.inst.PoolingZone);
                         ObjectPoolingManager.inst.ObjectDisappear();
                     }
+                    myCursor.BasicCursor();
+                   
 
                 }
             }

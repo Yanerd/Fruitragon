@@ -26,19 +26,20 @@ public class ButtonManager : MonoBehaviour
 
     #endregion
 
+    #region Click Object Value
     [SerializeField] public bool buildingMode { get; set; } 
     [SerializeField] public bool OnPotato { get; set; }
     [SerializeField] public bool OnApple { get; set; }
     [SerializeField] public bool OnCabbage { get; set; }
     [SerializeField] public bool OnCarrot { get; set; }
     [SerializeField] public bool OnEggplant { get; set; }
-
     [SerializeField] public bool OnWater { get; set; }
-
 
     [SerializeField] public bool OnHouse { get; set; }
     [SerializeField] public bool OnWell { get; set; }
+    #endregion
 
+    #region Ui
     [Header("[ UI ]")]
     [SerializeField] public GameObject Menu;
     [SerializeField] public GameObject buldingModeMenu;
@@ -46,6 +47,45 @@ public class ButtonManager : MonoBehaviour
     [SerializeField] GameObject []BulidingModeScroll;
     [SerializeField] GameObject[] BulidingModeScrollButton;
     [SerializeField] GameObject SearchRoomPage;
+    [SerializeField] GameObject StorePage;
+    #endregion
+
+    CursorChange myCursor;
+    Camera myCamera;
+    Vector3 originCamearPos;
+
+    bool onMene;
+
+    private void Awake()
+    {
+        //Bring Camera Component
+        myCamera = Camera.main;
+        originCamearPos = myCamera.transform.position;
+
+        //button is clicked Permit
+        onMene = false;
+
+        //Cursor Change Image 
+        myCursor = FindObjectOfType<CursorChange>();
+
+        //Reset Value
+        Initializing();
+    }
+
+    //Value Reset 
+    private void Initializing()
+    {
+        ButtonManager.inst.OnWell = false;
+        ButtonManager.inst.OnPotato = false;
+        ButtonManager.inst.OnHouse = false;
+        ButtonManager.inst.OnPotato = false;
+        ButtonManager.inst.OnApple = false;
+        ButtonManager.inst.OnCabbage = false;
+        ButtonManager.inst.OnCarrot = false;
+        ButtonManager.inst.OnEggplant = false;
+    }
+
+    #region BuildingMode Func
 
     #region BuildingMode ButtonEvent
     public void OpenScrollVegetable()
@@ -117,7 +157,7 @@ public class ButtonManager : MonoBehaviour
 
     }
     #endregion
-    
+
     #region BuildingMenu Open&Close Corutine
     IEnumerator Gotrans(GameObject scroll)
     {
@@ -151,15 +191,54 @@ public class ButtonManager : MonoBehaviour
     }
     #endregion
 
+    public void Go_buildingMode()
+    {
+        if (onMene) return;
+        onMene = true;
+
+        buildingMode = true;
+        Menu.SetActive(false);
+        buldingModeMenu.SetActive(true);
+    }
+    public void Back_buildingMode()
+    {
+        if (!onMene) return;
+        if (onMene)
+            onMene = false;
+
+        buildingMode = false;
+        Menu.SetActive(true);
+        buldingModeMenu.SetActive(false);
+        Initializing();
+        ObjectPoolingManager.inst.ObjectDisappear();
+        myCursor.BasicCursor();
+    }
+    #endregion
+
+    #region SearchRoom Func
+
+    #region Search Room ButtonEvent
     public void UpImage()
     {
+        if (onMene) return;
+        onMene = true;
+
+        StartCoroutine(ChangeCameraView());
+       
         StartCoroutine(Uptrans(SearchRoomPage));
     }
     public void DownImage()
     {
+        if (!onMene) return;
+        if (onMene)
+            onMene = false;
+
+        myCamera.transform.position = originCamearPos;
+        myCamera.orthographicSize = 2.5f;
+
         StartCoroutine(Downtrans(SearchRoomPage));
     }
-
+    #endregion
 
     #region SearchRoom Open&Close Corutine
     IEnumerator Uptrans(GameObject image)
@@ -194,54 +273,67 @@ public class ButtonManager : MonoBehaviour
     }
     #endregion
 
-
-    Ground ground;
-
-    private void Awake()
+    #region SearchRoom CameraView
+    IEnumerator ChangeCameraView()
     {
-        ground = FindObjectOfType<Ground>();
-        Initializing();
-    }
+        StartCoroutine(CameraViewSize());
+        while (true)
+        {
+            if (!onMene)
+            {
+                myCamera.transform.position = originCamearPos;
+                myCamera.orthographicSize = 2.5f;
+                yield break;
+            }
+            myCamera.transform.position =
+                Vector3.Lerp(myCamera.transform.position, new Vector3(-4.3f, 5, -7), Time.deltaTime*2f);
+            
+            yield return null;
+            if (myCamera.transform.position.x <= -4.29f)
+            {
+                
+                yield break;
+            }
+        }
 
+    }
+    IEnumerator CameraViewSize()
+    {
+        while (true)
+        {
+            myCamera.orthographicSize -= 0.03f;
+            yield return new WaitForSeconds(Time.deltaTime);
+            if (myCamera.orthographicSize <= 1)
+            {
+                yield break;
+            }
+        }
+    }
+    #endregion
 
+    #endregion
 
-    public void Go_buildingMode()
+    #region StorePage Func
+    public void UpStorePage()
     {
-        buildingMode = true;
-        Menu.SetActive(false);
-        buldingModeMenu.SetActive(true);
-        //ground.Execute_bulidingMode();
+        if (onMene) return;
+        onMene = true;
+        StartCoroutine(Uptrans(StorePage));
     }
-    public void Back_buildingMode()
+    public void DownStorePage()
     {
-        buildingMode = false;
-        Menu.SetActive(true);
-        buldingModeMenu.SetActive(false);
-        Initializing();
-        ObjectPoolingManager.inst.ObjectDisappear();
-        //ground.DeExecute_bulidingMode();
+        if (!onMene) return;
+        if(onMene)
+        onMene = false;
+        StartCoroutine(Downtrans(StorePage));
     }
+    #endregion
 
-    public void Go_OffenseScene()
-    {
-        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync("OffenceScene");
-        asyncOperation.allowSceneActivation = true;
-    }
-    private void Initializing()
-    {
-        ButtonManager.inst.OnWell = false;
-        ButtonManager.inst.OnPotato = false;
-        ButtonManager.inst.OnHouse = false;
-        ButtonManager.inst.OnPotato = false;
-        ButtonManager.inst.OnApple = false;
-        ButtonManager.inst.OnCabbage = false;
-        ButtonManager.inst.OnCarrot = false;
-        ButtonManager.inst.OnEggplant = false;
-    }
+    #region Select Building&Vegetable Button
     public void SelectWell()
     {
         CloseScrollBuilding();
-
+        myCursor.BuildingCursor();
         ButtonManager.inst.OnWell = true;
 
         ButtonManager.inst.OnPotato = false;
@@ -256,7 +348,7 @@ public class ButtonManager : MonoBehaviour
     public void SelectHouse()
     {
         CloseScrollBuilding();
-
+        myCursor.BuildingCursor();
         ButtonManager.inst.OnHouse = true;
         ButtonManager.inst.OnPotato = false;
         ButtonManager.inst.OnWell = false;
@@ -269,7 +361,7 @@ public class ButtonManager : MonoBehaviour
     public void SelectPotato()
     {
         CloseScrollVegetable();
-
+        myCursor.VegetableCursor();
         ButtonManager.inst.OnPotato = true;
 
         ButtonManager.inst.OnWell = false;
@@ -280,11 +372,10 @@ public class ButtonManager : MonoBehaviour
         ButtonManager.inst.OnEggplant = false;
         ObjectPoolingManager.inst.ObjectDisappear();
     }
-   
     public void SelectApple()
     {
         CloseScrollVegetable();
-
+        myCursor.VegetableCursor();
         ButtonManager.inst.OnApple = true;
 
         ButtonManager.inst.OnWell = false;
@@ -299,7 +390,7 @@ public class ButtonManager : MonoBehaviour
     public void SelectCabbage()
     {
         CloseScrollVegetable();
-
+        myCursor.VegetableCursor();
         ButtonManager.inst.OnCabbage = true;
 
         ButtonManager.inst.OnWell = false;
@@ -314,7 +405,7 @@ public class ButtonManager : MonoBehaviour
     public void SelectCarrot()
     {
         CloseScrollVegetable();
-
+        myCursor.VegetableCursor();
         ButtonManager.inst.OnCarrot = true;
 
         ButtonManager.inst.OnWell = false;
@@ -329,7 +420,7 @@ public class ButtonManager : MonoBehaviour
     public void SelectEggplant()
     {
         CloseScrollVegetable();
-
+        myCursor.VegetableCursor();
         ButtonManager.inst.OnEggplant = true;
 
         ButtonManager.inst.OnWell = false;
@@ -341,5 +432,13 @@ public class ButtonManager : MonoBehaviour
         ButtonManager.inst.OnCarrot = false;
         ObjectPoolingManager.inst.ObjectDisappear();
     }
+    #endregion
+
+    public void Go_OffenseScene()
+    {
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync("OffenceScene");
+        asyncOperation.allowSceneActivation = true;
+    }
+
 
 }
