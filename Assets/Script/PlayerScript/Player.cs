@@ -118,7 +118,6 @@ public class Player : MonoBehaviour
     {
         CamTransFormControll();
         InputControll();
-        Debug.Log(isAttacking);
     }
 
     private void InputControll()//keyboard and mouse input controll

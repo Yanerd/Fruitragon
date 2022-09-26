@@ -505,6 +505,7 @@ MonoBehaviour:
   Stem: {fileID: 101702627930993286}
   Dragon: {fileID: 7730504636497394127}
   Effect: {fileID: 3148877968566268699}
+  fruit: []
   onWater: 0
 --- !u!54 &6997767772177949334
 Rigidbody:

@@ -9,23 +9,18 @@ public class Ground : MonoBehaviour
     MeshRenderer mr;
     public bool OnBuilding;
     public Material Floor;
-    public bool onbulidingMode = false;
     [SerializeField] bool OnAlpha=false;
     [SerializeField] public bool OnWater = false;
 
     int mask;
 
     ButtonManager B;
-
     void Start()
     {
         mr = GetComponent<MeshRenderer>();
         B = FindObjectOfType<ButtonManager>();
-        mask = 1 << 9 | 1 << 10;
+        mask = 1 << 9 | 1 << 10|1<<6|1<<8|1<<7;
     }
-
-   
-
     void Update()
     {
 
@@ -38,7 +33,7 @@ public class Ground : MonoBehaviour
             }
             else if (OnAlpha == true)
             {
-                mr.materials[0].color = Color.blue;
+                mr.materials[0].color = Color.blue; 
             }
             else if (OnAlpha == false)
             {
@@ -50,7 +45,7 @@ public class Ground : MonoBehaviour
         {
             if (OnBuilding == true || OnAlpha == true)
             {
-                Camera.main.cullingMask = -1;
+                 Camera.main.cullingMask = -1;
                 mr.materials[0].color = Color.white;
             }
             if(OnWater==true)
@@ -71,41 +66,10 @@ public class Ground : MonoBehaviour
         }
     }
 
-    public void Execute_bulidingMode()
-    {
-        Camera.main.cullingMask = mask;
-        if (OnBuilding == true)
-        {
-            mr.materials[0].color = Color.red;
-        }
-        else if (OnAlpha == true)
-        {
-            mr.materials[0].color = Color.blue;
-        }
-        else if (OnAlpha == false)
-        {
-            mr.materials[0].color = Color.white;
-        }
-
-    }
-
-
-
-    public void DeExecute_bulidingMode()
-    {
-        if (OnBuilding == true || OnAlpha == true)
-        {
-            Camera.main.cullingMask = -1;
-            mr.materials[0].color = Color.white;
-        }
-    }
-
-
-
-
+    
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.collider.tag == "Building")
+        if (collision.collider.tag == "Building")
         {
             this.gameObject.tag = "OnGround";
             OnBuilding = true;
@@ -120,41 +84,54 @@ public class Ground : MonoBehaviour
             this.gameObject.tag = "OnGround";
             OnBuilding = true;
         }
-        if (collision.collider.tag == "Alpha")
-        {
-            OnAlpha = true;
-        }
        
-
-    }
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.tag == "WaterRay")
-        {
-            OnWater = true;
-        }
     }
     private void OnCollisionExit(Collision collision)
     {
+        if (collision.collider.tag == "Building")
+        {
+            this.gameObject.tag = "GroundEmpty";
+            OnBuilding = false;
+        }
+        if (collision.collider.tag == "plant")
+        {
+            this.gameObject.tag = "GroundEmpty";
+            OnBuilding = false;
+        }
         if (collision.collider.tag == "well")
         {
             this.gameObject.tag = "GroundEmpty";
             OnBuilding = false;
         }
-        if (collision.collider.tag == "Alpha")
+       
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+       
+        if (other.tag == "Alpha")
+        {
+            this.gameObject.tag = "Alpha";
+            OnAlpha = true;
+        }
+        if (other.tag == "Water")
+        {
+            OnWater = true;
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+       
+        if (other.tag == "Alpha")
         {
             this.gameObject.tag = "GroundEmpty";
             OnAlpha = false;
         }
-        
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.tag == "WaterRay")
+        if (other.tag == "Water")
         {
             OnWater = false;
         }
+
     }
 
 

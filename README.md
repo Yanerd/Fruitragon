@@ -1,2 +1,0 @@
-# Fruitragon
-Team_Yanerd

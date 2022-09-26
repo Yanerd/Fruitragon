@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 public class ObjectPoolingManager : MonoBehaviour
 {
     #region 싱글톤
@@ -26,63 +28,179 @@ public class ObjectPoolingManager : MonoBehaviour
     #endregion
 
     [SerializeField] public Transform PoolingZone;
-    [SerializeField] GameObject[] all_Prefab;
-    [SerializeField] MeshRenderer[] PrefabMesh;
-    //0.감자,1.사과,2.당근,3.양배추,4.가지,5.집
 
-    List<GameObject> InstGameObjects = new List<GameObject>();
+    private List<GameObject> InstAlphaObjects = new List<GameObject>();//Save Alpha PrefabList
 
-    public List<GameObject> waterList = new List<GameObject>();
-
-
-    void Awake()
+    private Dictionary<string, List<GameObject>> instList = new Dictionary<string, List<GameObject>>();
+    //Call instantiate
+    public GameObject Instantiate(GameObject prefab, Vector3 position, Quaternion rotation,Transform parent)
     {
-        for (int i = 0; i < all_Prefab.Length; i++)
+        List<GameObject> list = null;
+        GameObject instance = null;
+
+        bool listCheck = instList.TryGetValue(prefab.name, out list);
+        if (listCheck==false)
         {
-            GameObject InstObject = Instantiate(all_Prefab[i], PoolingZone.position, Quaternion.identity);
-            InstGameObjects.Add(InstObject);
-            InstGameObjects[i].SetActive(false);
+            list = new List<GameObject>();
+            instList.Add(prefab.name, list);
+        }
+        if (list.Count == 0)
+        {
+            instance = GameObject.Instantiate(prefab, position + new Vector3(0, 0.25f, 0), rotation, parent);
+        }
+        else if (list.Count > 0)
+        {
+            instance = list[0];
+            instance.transform.position = position + new Vector3(0, 0.3f, 0);
+            instance.transform.rotation = rotation;
+            list.RemoveAt(0);
+        }
+
+        if (instance != null)
+        {
+            instance.gameObject.SetActive(true);
+            return instance;
+        }
+        else
+        {
+            return null;
+        }
+    }
+    //Call bringObject & Pooling
+    public void Destroy(GameObject Prefab)
+    {
+        List<GameObject> list = null;
+        string prefabId = Prefab.name.Replace("(Clone)", "");
+        bool listCached = instList.TryGetValue(prefabId, out list);
+        if (listCached==false)
+        {
+            Debug.LogError("Not Found " + Prefab.name);
+            return;
+        }
+
+        Prefab.transform.position = PoolingZone.position;
+        Prefab.SetActive(false);
+        list.Add(Prefab);
+
+    }
+
+    //BuldingMode Pooling
+    public void inst_AlphaPrefab(GameObject[] prefab)
+    {
+        for (int i = 0; i < prefab.Length; i++)
+        {
+            GameObject instObject = Instantiate(prefab[i], PoolingZone.position, Quaternion.identity);
+            InstAlphaObjects.Add(instObject);
+            //InstAlphaObjects[i].SetActive(false);
         }
     }
 
-    public void Objectapperar(Vector3 tr)
+    public void Objectapperear(Vector3 tr)
     {
         if (ButtonManager.inst.OnHouse == true)
         {
-            InstGameObjects[5].transform.position = tr+new Vector3(0,0.3f,0);
-            InstGameObjects[5].SetActive(true);
-        }
-        else if (ButtonManager.inst.OnPotato == true)
-        {
-            InstGameObjects[0].transform.position = tr + new Vector3(0, 0.3f, 0);
-            InstGameObjects[0].SetActive(true);
+            InstAlphaObjects[5].transform.position = tr + new Vector3(0, 0.3f, 0);
+            //InstAlphaObjects[5].SetActive(true);
         }
         else if (ButtonManager.inst.OnWell == true)
         {
-            InstGameObjects[6].transform.position = tr + new Vector3(0, 0.5f, 0);
-            InstGameObjects[6].SetActive(true);
+            InstAlphaObjects[6].transform.position = tr + new Vector3(0, 0.5f, 0);
+            //InstAlphaObjects[0].SetActive(true);
         }
+        else if (ButtonManager.inst.OnPotato == true)
+        {
+            InstAlphaObjects[0].transform.position = tr + new Vector3(0, 0.3f, 0);
+            //InstAlphaObjects[0].SetActive(true);
+        }
+        else if (ButtonManager.inst.OnApple==true)
+        {
+            InstAlphaObjects[1].transform.position = tr + new Vector3(0, 0.4f, 0);
+            //InstAlphaObjects[0].SetActive(true);
+        }
+        else if (ButtonManager.inst.OnCabbage == true)
+        {
+            InstAlphaObjects[2].transform.position = tr + new Vector3(0, 0.4f, 0);
+            //InstAlphaObjects[0].SetActive(true);
+        }
+        else if (ButtonManager.inst.OnCarrot == true)
+        {
+            InstAlphaObjects[3].transform.position = tr + new Vector3(0, 0.4f, 0);
+            //InstAlphaObjects[0].SetActive(true);
+        }
+        else if (ButtonManager.inst.OnEggplant == true)
+        {
+            InstAlphaObjects[4].transform.position = tr + new Vector3(0, 0.5f, 0);
+            //InstAlphaObjects[6].SetActive(true);
+        }
+        else if (ButtonManager.inst.OnWater == true)
+        {
+            InstAlphaObjects[7].transform.position = tr + new Vector3(0, 0.5f, 0);
 
+        }
     }
-
     public void ObjectDisappear()
     {
+        
         if (ButtonManager.inst.OnHouse == false)
         {
-            InstGameObjects[5].transform.position = PoolingZone.position;
-            InstGameObjects[5].SetActive(false);
+            InstAlphaObjects[5].transform.position = PoolingZone.position;
+            //InstAlphaObjects[5].SetActive(false);
         }
         if (ButtonManager.inst.OnPotato == false)
         {
-            InstGameObjects[0].transform.position = PoolingZone.position;
-            InstGameObjects[0].SetActive(false);
+            InstAlphaObjects[0].transform.position = PoolingZone.position;
+            //InstAlphaObjects[0].SetActive(false);
         }
         if (ButtonManager.inst.OnWell == false)
         {
-            InstGameObjects[6].transform.position = PoolingZone.position;
-            InstGameObjects[6].SetActive(false);
+            InstAlphaObjects[6].transform.position = PoolingZone.position;
+           //InstAlphaObjects[6].SetActive(false);
         }
+        if (ButtonManager.inst.OnApple == false)
+        {
+            InstAlphaObjects[1].transform.position = PoolingZone.position;
+            //InstAlphaObjects[6].SetActive(false);
+        }
+        if (ButtonManager.inst.OnCabbage == false)
+        {
+            InstAlphaObjects[2].transform.position = PoolingZone.position;
+            //InstAlphaObjects[6].SetActive(false);
+        }
+        if (ButtonManager.inst.OnCarrot == false)
+        {
+            InstAlphaObjects[3].transform.position = PoolingZone.position;
+            //InstAlphaObjects[6].SetActive(false);
+        }
+        if (ButtonManager.inst.OnEggplant == false)
+        {
+            InstAlphaObjects[4].transform.position = PoolingZone.position;
+            //InstAlphaObjects[6].SetActive(false);
+        }
+
     }
 
+    
 
+
+   
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    //=================================================
+
+
+
+
+
+    //=================================================
 }

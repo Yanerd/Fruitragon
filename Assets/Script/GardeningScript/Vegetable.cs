@@ -32,9 +32,11 @@ public class Vegetable : MonoBehaviour
     {
         StartCoroutine(GrowthSeed());
     }
-
+    int a;
     IEnumerator GrowthSeed()
     {
+        if (10<a) yield break;
+
         yield return new WaitForSeconds(3f);
         myMeshRenderer.enabled = false;
         Stem.gameObject.SetActive(true);
@@ -63,11 +65,16 @@ public class Vegetable : MonoBehaviour
     //=================================================
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("물을 주었어요");
-        if(other.tag=="Water")
+        if (other.tag == "Water")
         {
-            onWater = true;
+            if (Input.GetMouseButtonUp(0))
+            {
+                Debug.Log("물을 줬어요");
+                onWater = true;
+            }
         }
+
+
     }
     //=================================================
 
