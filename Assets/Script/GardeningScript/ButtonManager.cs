@@ -37,6 +37,10 @@ public class ButtonManager : MonoBehaviour
 
     [SerializeField] public bool OnHouse { get; set; }
     [SerializeField] public bool OnWell { get; set; }
+
+
+    [SerializeField] public bool WaterRay { get; set; } = false;
+
     #endregion
 
     #region Ui
@@ -56,6 +60,10 @@ public class ButtonManager : MonoBehaviour
 
     bool onMene;
 
+    Vector3 VegetableMenu;
+    Vector3 BuildingMenu;
+    Vector3 originMenuPos;
+
     private void Awake()
     {
         //Bring Camera Component
@@ -70,6 +78,11 @@ public class ButtonManager : MonoBehaviour
 
         //Reset Value
         Initializing();
+
+        VegetableMenu = BulidingModeScroll[0].transform.position;
+        BuildingMenu = BulidingModeScroll[1].transform.position;
+
+
     }
 
     //Value Reset 
@@ -91,6 +104,9 @@ public class ButtonManager : MonoBehaviour
     public void OpenScrollVegetable()
     {
         StartCoroutine(Gotrans(BulidingModeScroll[0]));
+        BulidingModeScroll[1].transform.position = BuildingMenu;
+        SwitchButtonOpen(1);
+        //StartCoroutine(Backtrans(BulidingModeScroll[1]));
         SwitchButtonBack(0);
     }
     public void CloseScrollVegetable()
@@ -101,6 +117,9 @@ public class ButtonManager : MonoBehaviour
     public void OpenScrollBuilding()
     {
         StartCoroutine(Gotrans(BulidingModeScroll[1]));
+        BulidingModeScroll[0].transform.position = VegetableMenu;
+        SwitchButtonOpen(0);
+        //StartCoroutine(Backtrans(BulidingModeScroll[0]));
         SwitchButtonBack(1);
     }
     public void CloseScrollBuilding()
@@ -161,6 +180,7 @@ public class ButtonManager : MonoBehaviour
     #region BuildingMenu Open&Close Corutine
     IEnumerator Gotrans(GameObject scroll)
     {
+        originMenuPos = scroll.transform.position;
         while(true)
         {
             scroll.transform.position = 
@@ -169,14 +189,15 @@ public class ButtonManager : MonoBehaviour
 
             if(scroll.transform.position.x>=450f)
             {
-                yield break;
+                //scroll.transform.position = originPos;
+                 yield break;
             }
         }
         
     }
     IEnumerator Backtrans(GameObject scroll)
     {
-        while(true)
+        while (true)
         {
             scroll.transform.position = 
                 Vector3.Lerp(scroll.transform.position, scroll.transform.position + new Vector3(-100f, 0, 0), Time.deltaTime * 25f);
@@ -184,6 +205,7 @@ public class ButtonManager : MonoBehaviour
 
             if(scroll.transform.position.x<=-350f)
             {
+                scroll.transform.position = originMenuPos;
                 yield break;
             }
         }
@@ -291,7 +313,6 @@ public class ButtonManager : MonoBehaviour
             yield return null;
             if (myCamera.transform.position.x <= -4.29f)
             {
-                
                 yield break;
             }
         }
@@ -333,7 +354,7 @@ public class ButtonManager : MonoBehaviour
     public void SelectWell()
     {
         CloseScrollBuilding();
-        myCursor.BuildingCursor();
+        //myCursor.BuildingCursor();
         ButtonManager.inst.OnWell = true;
 
         ButtonManager.inst.OnPotato = false;
@@ -348,7 +369,7 @@ public class ButtonManager : MonoBehaviour
     public void SelectHouse()
     {
         CloseScrollBuilding();
-        myCursor.BuildingCursor();
+        //myCursor.BuildingCursor();
         ButtonManager.inst.OnHouse = true;
         ButtonManager.inst.OnPotato = false;
         ButtonManager.inst.OnWell = false;
@@ -361,7 +382,7 @@ public class ButtonManager : MonoBehaviour
     public void SelectPotato()
     {
         CloseScrollVegetable();
-        myCursor.VegetableCursor();
+        //myCursor.VegetableCursor();
         ButtonManager.inst.OnPotato = true;
 
         ButtonManager.inst.OnWell = false;
@@ -375,7 +396,7 @@ public class ButtonManager : MonoBehaviour
     public void SelectApple()
     {
         CloseScrollVegetable();
-        myCursor.VegetableCursor();
+        //myCursor.VegetableCursor();
         ButtonManager.inst.OnApple = true;
 
         ButtonManager.inst.OnWell = false;
@@ -390,7 +411,7 @@ public class ButtonManager : MonoBehaviour
     public void SelectCabbage()
     {
         CloseScrollVegetable();
-        myCursor.VegetableCursor();
+        //myCursor.VegetableCursor();
         ButtonManager.inst.OnCabbage = true;
 
         ButtonManager.inst.OnWell = false;
@@ -405,7 +426,7 @@ public class ButtonManager : MonoBehaviour
     public void SelectCarrot()
     {
         CloseScrollVegetable();
-        myCursor.VegetableCursor();
+        //myCursor.VegetableCursor();
         ButtonManager.inst.OnCarrot = true;
 
         ButtonManager.inst.OnWell = false;
@@ -420,7 +441,7 @@ public class ButtonManager : MonoBehaviour
     public void SelectEggplant()
     {
         CloseScrollVegetable();
-        myCursor.VegetableCursor();
+        //myCursor.VegetableCursor();
         ButtonManager.inst.OnEggplant = true;
 
         ButtonManager.inst.OnWell = false;
@@ -432,6 +453,7 @@ public class ButtonManager : MonoBehaviour
         ButtonManager.inst.OnCarrot = false;
         ObjectPoolingManager.inst.ObjectDisappear();
     }
+
     #endregion
 
     public void Go_OffenseScene()

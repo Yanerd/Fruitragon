@@ -6,6 +6,7 @@ public class Vegetable : MonoBehaviour
 {
     MeshRenderer myMeshRenderer;
 
+    [SerializeField] MeshRenderer Seed;
     [SerializeField] GameObject Stem;
     [SerializeField] GameObject Dragon;
     [SerializeField] GameObject Effect;
@@ -14,31 +15,24 @@ public class Vegetable : MonoBehaviour
     [SerializeField] public bool onWater=false;
 
 
-    private void Awake()
-    {
-        myMeshRenderer = GetComponent<MeshRenderer>();
-    }
-
     private void Update()
     {
-        if(onWater==true)
+        if(onWater == true)
         {
-            startGrowth();
             onWater = false;
+            startGrowth();
         }
     }
 
     public void startGrowth()
     {
+        Debug.Log("자라나라");
         StartCoroutine(GrowthSeed());
     }
-    int a;
     IEnumerator GrowthSeed()
     {
-        if (10<a) yield break;
-
         yield return new WaitForSeconds(3f);
-        myMeshRenderer.enabled = false;
+        Seed.enabled = false;
         Stem.gameObject.SetActive(true);
         
         StartCoroutine(onEffect());
@@ -62,22 +56,7 @@ public class Vegetable : MonoBehaviour
         Effect.gameObject.SetActive(false);
     }
 
-    //=================================================
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.tag == "Water")
-        {
-            if (Input.GetMouseButtonUp(0))
-            {
-                Debug.Log("물을 줬어요");
-                onWater = true;
-            }
-        }
-
-
-    }
-    //=================================================
-
+   
 
 
 

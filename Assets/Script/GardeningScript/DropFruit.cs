@@ -42,7 +42,6 @@ public class DropFruit : MonoBehaviour
     {
         if(collision.gameObject.tag=="ground"|| collision.gameObject.tag == "OnGround")
         {
-            Debug.Log("�����η��� �߰��ߴ�.");
             gameObject.SetActive(false);
         }
     }

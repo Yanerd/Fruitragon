@@ -15,6 +15,7 @@ TagManager:
   - Weapon
   - OnGround
   - WaterRay
+  - FxTemporaire
   layers:
   - Default
   - TransparentFX

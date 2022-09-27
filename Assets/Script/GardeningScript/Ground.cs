@@ -114,7 +114,7 @@ public class Ground : MonoBehaviour
             this.gameObject.tag = "Alpha";
             OnAlpha = true;
         }
-        if (other.tag == "Water")
+        if (other.tag == "WaterRay")
         {
             OnWater = true;
         }
@@ -127,7 +127,7 @@ public class Ground : MonoBehaviour
             this.gameObject.tag = "GroundEmpty";
             OnAlpha = false;
         }
-        if (other.tag == "Water")
+        if (other.tag == "WaterRay")
         {
             OnWater = false;
         }

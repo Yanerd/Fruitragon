@@ -11,10 +11,9 @@ GameObject:
   - component: {fileID: 2959144395700584589}
   - component: {fileID: 6125879464616213928}
   - component: {fileID: 2233790267902982444}
-  - component: {fileID: -655052392572672991}
   m_Layer: 0
-  m_Name: Water_Test
-  m_TagString: Water
+  m_Name: WaterRayPos
+  m_TagString: WaterRay
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -63,15 +62,3 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.5, y: 0.5, z: 0.5}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-655052392572672991
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 400829841053645059}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d85579a4a9f7e24c931c7fbcc192408, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

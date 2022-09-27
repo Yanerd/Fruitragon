@@ -16,51 +16,51 @@ public class FollowWater : MonoBehaviour
 
     void Update()
     {
-        if (ButtonManager.inst.buildingMode == true) return;
-        //=================================================
-        #region WaterDrag&Drop
-        if (Input.GetMouseButton(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
+        //if (ButtonManager.inst.buildingMode == true) return;
+        ////=================================================
+        //#region WaterDrag&Drop
+        //if (Input.GetMouseButton(0))
+        //{
+        //    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //    RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit, 1000))
-            {
-                FollowPoint = hit.point;
-                FollowPoint.y = dropPoint_Ypos;
-                this.transform.position = FollowPoint;
+        //    if (Physics.Raycast(ray, out hit, 1000))
+        //    {
+        //        FollowPoint = hit.point;
+        //        FollowPoint.y = dropPoint_Ypos;
+        //        this.transform.position = FollowPoint;
 
-                if (FollowPoint.x <= MousePositionMinX)
-                {
-                    FollowPoint.x = MousePositionMinX;
-                }
+        //        if (FollowPoint.x <= MousePositionMinX)
+        //        {
+        //            FollowPoint.x = MousePositionMinX;
+        //        }
 
-                if (FollowPoint.z <= MousePositionMinz)
-                {
-                    FollowPoint.z = MousePositionMinz;
-                }
+        //        if (FollowPoint.z <= MousePositionMinz)
+        //        {
+        //            FollowPoint.z = MousePositionMinz;
+        //        }
 
-                if (FollowPoint.x >= MousePositionMaxX)
-                {
-                    FollowPoint.x = MousePositionMaxX;
-                }
+        //        if (FollowPoint.x >= MousePositionMaxX)
+        //        {
+        //            FollowPoint.x = MousePositionMaxX;
+        //        }
 
-                if (FollowPoint.z >= MousePositionMaxZ)
-                {
-                    FollowPoint.z = MousePositionMaxZ;
-                }
+        //        if (FollowPoint.z >= MousePositionMaxZ)
+        //        {
+        //            FollowPoint.z = MousePositionMaxZ;
+        //        }
 
-                Vector3 a = Camera.main.WorldToScreenPoint(FollowPoint);
-                this.transform.position = Camera.main.ScreenToWorldPoint(a);
-            }
-        }
-        else
-        {
-            transform.Translate(0, dropSpeed * Time.deltaTime, 0);
-        }
+        //        Vector3 a = Camera.main.WorldToScreenPoint(FollowPoint);
+        //        this.transform.position = Camera.main.ScreenToWorldPoint(a);
+        //    }
+        //}
+        //else
+        //{
+        //    transform.Translate(0, dropSpeed * Time.deltaTime, 0);
+        //}
 
-        #endregion
-        //=================================================
+        //#endregion
+        ////=================================================
     }
 
 

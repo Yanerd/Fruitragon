@@ -46,7 +46,7 @@ public class ObjectPoolingManager : MonoBehaviour
         }
         if (list.Count == 0)
         {
-            instance = GameObject.Instantiate(prefab, position + new Vector3(0, 0.25f, 0), rotation, parent);
+            instance = GameObject.Instantiate(prefab, position, rotation, parent);
         }
         else if (list.Count > 0)
         {
@@ -104,7 +104,7 @@ public class ObjectPoolingManager : MonoBehaviour
         }
         else if (ButtonManager.inst.OnWell == true)
         {
-            InstAlphaObjects[6].transform.position = tr + new Vector3(0, 0.5f, 0);
+            InstAlphaObjects[6].transform.position = tr + new Vector3(0, 0.3f, 0);
             //InstAlphaObjects[0].SetActive(true);
         }
         else if (ButtonManager.inst.OnPotato == true)
@@ -132,9 +132,14 @@ public class ObjectPoolingManager : MonoBehaviour
             InstAlphaObjects[4].transform.position = tr + new Vector3(0, 0.5f, 0);
             //InstAlphaObjects[6].SetActive(true);
         }
+        else if (ButtonManager.inst.WaterRay == true)
+        {
+            InstAlphaObjects[7].transform.position = tr + new Vector3(0, 0.3f, 0);
+
+        }
         else if (ButtonManager.inst.OnWater == true)
         {
-            InstAlphaObjects[7].transform.position = tr + new Vector3(0, 0.5f, 0);
+            InstAlphaObjects[8].transform.position = tr + new Vector3(0, 0.3f, 0);
 
         }
     }
@@ -175,6 +180,16 @@ public class ObjectPoolingManager : MonoBehaviour
         {
             InstAlphaObjects[4].transform.position = PoolingZone.position;
             //InstAlphaObjects[6].SetActive(false);
+        }
+        if (ButtonManager.inst.WaterRay == false)
+        {
+            InstAlphaObjects[7].transform.position = PoolingZone.position;
+
+        }
+        if (ButtonManager.inst.OnWater == false)
+        {
+            InstAlphaObjects[8].transform.position = PoolingZone.position;
+
         }
 
     }
