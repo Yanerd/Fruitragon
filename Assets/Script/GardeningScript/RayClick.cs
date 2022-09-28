@@ -34,16 +34,15 @@ public class RayClick : MonoBehaviour
 
     void Update()
     {
-
-
-        if (ButtonManager.inst.buildingMode == true)
+       
+        if (DefenseUIManager.INSTANCE.buildingMode == true)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             Debug.DrawRay(ray.origin, ray.direction * 1000, Color.green);
             if (Physics.Raycast(ray, out hit, 1000f))
             {
-                if (hit.transform.name == "EndGround"|| hit.transform.tag == "OnGround")
+                if (hit.transform.name == "NoBuildingZone" || hit.transform.tag == "OnGround")
                 {
                     myCursor.noBuildingZoneCursor();
                 }
@@ -54,13 +53,13 @@ public class RayClick : MonoBehaviour
                 if (hit.transform.tag == "GroundEmpty")
                 {
                     myCursor.BasicCursor();
-                    if (ButtonManager.inst.OnHouse == true || ButtonManager.inst.OnWell == true)
+                    if (DefenseUIManager.INSTANCE.OnHouse == true || DefenseUIManager.INSTANCE.OnWell == true)
                     {
                         myCursor.BuildingCursor();
                     }
-                    if (ButtonManager.inst.OnApple == true || ButtonManager.inst.OnCabbage == true ||
-                               ButtonManager.inst.OnCarrot == true || ButtonManager.inst.OnEggplant == true ||
-                               ButtonManager.inst.OnPotato == true)
+                    if (DefenseUIManager.INSTANCE.OnApple == true || DefenseUIManager.INSTANCE.OnCabbage == true ||
+                                DefenseUIManager.INSTANCE.OnCarrot == true || DefenseUIManager.INSTANCE.OnEggplant == true ||
+                                DefenseUIManager.INSTANCE.OnPotato == true)
                     {
                         myCursor.VegetableCursor();
                     }
@@ -69,14 +68,14 @@ public class RayClick : MonoBehaviour
         }
 
 
-        if (ButtonManager.inst.buildingMode == true &&
-            (ButtonManager.inst.OnHouse == true ||
-            ButtonManager.inst.OnWell == true ||
-            ButtonManager.inst.OnApple == true ||
-            ButtonManager.inst.OnCabbage == true ||
-            ButtonManager.inst.OnCarrot == true ||
-            ButtonManager.inst.OnEggplant == true ||
-            ButtonManager.inst.OnPotato == true))
+        if ( DefenseUIManager.INSTANCE.buildingMode == true     &&
+           ( DefenseUIManager.INSTANCE.OnHouse == true       ||
+             DefenseUIManager.INSTANCE.OnWell == true        ||
+             DefenseUIManager.INSTANCE.OnApple == true       ||
+             DefenseUIManager.INSTANCE.OnCabbage == true     ||
+             DefenseUIManager.INSTANCE.OnCarrot == true      ||
+             DefenseUIManager.INSTANCE.OnEggplant == true    ||
+             DefenseUIManager.INSTANCE.OnPotato == true))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -99,45 +98,45 @@ public class RayClick : MonoBehaviour
                 {
                     if (hit.transform.tag == "OnGround") return;
 
-                    if (ButtonManager.inst.OnHouse == true)
+                    if (DefenseUIManager.INSTANCE.OnHouse == true)
                     {
-                        ButtonManager.inst.OnHouse = false;
+                        DefenseUIManager.INSTANCE.OnHouse = false;
                         ObjectPoolingManager.inst.Instantiate(housePrefab, hit.transform.position, Quaternion.identity, ObjectPoolingManager.inst.PoolingZone);
                         ObjectPoolingManager.inst.ObjectDisappear();
                     }
-                    else if (ButtonManager.inst.OnPotato == true)
+                    else if (DefenseUIManager.INSTANCE.OnPotato == true)
                     {
-                        ButtonManager.inst.OnPotato = false;
+                        DefenseUIManager.INSTANCE.OnPotato = false;
                         ObjectPoolingManager.inst.Instantiate(potatoPrefab, hit.transform.position + new Vector3(0, 0.33f, 0), Quaternion.identity, ObjectPoolingManager.inst.PoolingZone);
                         ObjectPoolingManager.inst.ObjectDisappear();
                     }
-                    else if (ButtonManager.inst.OnWell == true )
+                    else if (DefenseUIManager.INSTANCE.OnWell == true )
                     {
-                        ButtonManager.inst.OnWell = false;
+                        DefenseUIManager.INSTANCE.OnWell = false;
                         ObjectPoolingManager.inst.Instantiate(WellPrefab, hit.transform.position + new Vector3(0, 0.3f, 0), Quaternion.identity, ObjectPoolingManager.inst.PoolingZone);
                         ObjectPoolingManager.inst.ObjectDisappear();
                     }
-                    else if (ButtonManager.inst.OnApple == true)
+                    else if (DefenseUIManager.INSTANCE.OnApple == true)
                     {
-                        ButtonManager.inst.OnApple = false;
+                        DefenseUIManager.INSTANCE.OnApple = false;
                         ObjectPoolingManager.inst.Instantiate(ApplePrefab, hit.transform.position+new Vector3(0,0.33f,0), Quaternion.identity, ObjectPoolingManager.inst.PoolingZone);
                         ObjectPoolingManager.inst.ObjectDisappear();
                     }
-                    else if (ButtonManager.inst.OnCabbage == true)
+                    else if (DefenseUIManager.INSTANCE.OnCabbage == true)
                     {
-                        ButtonManager.inst.OnCabbage = false;
+                        DefenseUIManager.INSTANCE.OnCabbage = false;
                         ObjectPoolingManager.inst.Instantiate(CabbagePrefab, hit.transform.position + new Vector3(0, 0.33f, 0), Quaternion.identity, ObjectPoolingManager.inst.PoolingZone);
                         ObjectPoolingManager.inst.ObjectDisappear();
                     }
-                    else if (ButtonManager.inst.OnCarrot == true )
+                    else if (DefenseUIManager.INSTANCE.OnCarrot == true )
                     {
-                        ButtonManager.inst.OnCarrot = false;
+                        DefenseUIManager.INSTANCE.OnCarrot = false;
                         ObjectPoolingManager.inst.Instantiate(CarrotPrefab, hit.transform.position + new Vector3(0, 0.33f, 0), Quaternion.identity, ObjectPoolingManager.inst.PoolingZone);
                         ObjectPoolingManager.inst.ObjectDisappear();
                     }
-                    else if (ButtonManager.inst.OnEggplant == true)
+                    else if (DefenseUIManager.INSTANCE.OnEggplant == true)
                     {
-                        ButtonManager.inst.OnEggplant = false;
+                        DefenseUIManager.INSTANCE.OnEggplant = false;
                         ObjectPoolingManager.inst.Instantiate(EggplantPrefab, hit.transform.position + new Vector3(0, 0.33f, 0), Quaternion.identity, ObjectPoolingManager.inst.PoolingZone);
                         ObjectPoolingManager.inst.ObjectDisappear();
                     }
@@ -145,7 +144,7 @@ public class RayClick : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButton(0) && ButtonManager.inst.buildingMode == false)
+        if (Input.GetMouseButton(0) && DefenseUIManager.INSTANCE.buildingMode == false)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -153,8 +152,7 @@ public class RayClick : MonoBehaviour
             {
                 if (hit.transform.tag=="well")
                 {
-                    Debug.Log("¹°»ý¼º");
-                    ButtonManager.inst.WaterRay = true;
+                    DefenseUIManager.INSTANCE.WaterRay = true;
                     myCursor.WarterCursor();
                 }
                 if (FirstRayPosition == Vector3.zero)
@@ -169,7 +167,7 @@ public class RayClick : MonoBehaviour
                 }
             }
         }
-        else if (Input.GetMouseButtonUp(0)&&ButtonManager.inst.buildingMode == false&& ButtonManager.inst.WaterRay == true)
+        else if (Input.GetMouseButtonUp(0) && DefenseUIManager.INSTANCE.buildingMode == false && DefenseUIManager.INSTANCE.WaterRay == true)
         {
             myCursor.BasicCursor();
             
@@ -181,14 +179,17 @@ public class RayClick : MonoBehaviour
                 Debug.Log(hit.collider.tag);
                 if (hit.collider.tag=="plant")
                 {
-                    hit.transform.gameObject.GetComponent<Vegetable>().onWater = true;
-                    ButtonManager.inst.WaterRay = false;
+                    if(hit.transform.gameObject.GetComponent<Vegetable>().onWater == false)
+                    {
+                        hit.transform.gameObject.GetComponent<Vegetable>().startGrowth();
+                    }
+                    DefenseUIManager.INSTANCE.WaterRay = false;
                     ObjectPoolingManager.inst.ObjectDisappear();
                 }
             }
             else
             {
-                ButtonManager.inst.WaterRay = false;
+                DefenseUIManager.INSTANCE.WaterRay = false;
                 ObjectPoolingManager.inst.ObjectDisappear();
             }
         }

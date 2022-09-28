@@ -5,7 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
 
-    //components
+    #region components
     Transform playerTransform = null;
     Rigidbody playerRigidbody = null;
     Animator playerAnimator = null; 
@@ -13,96 +13,100 @@ public class Player : MonoBehaviour
     GameObject weaponCollider = null;
 
     //event components 
-    EventReciever playerEvent = null;
-
+    public EventReciever playerEvent = null;
     List<GameObject> liveDragon = new List<GameObject>();
+    #endregion
 
-    //constant value
+    #region constant value
     [Header("[Player Stats]")]
-    [SerializeField] private float playerMaxHp = 100f;
-    [SerializeField] private float playerSpeed = 4f;
+    [SerializeField] private float playerMaxHp = 1000f;
+    [SerializeField] private float playerSpeed = 0.4f;
     [SerializeField] private float playerAttackPower = 4f; 
     [SerializeField] private float playerAttackInterval = 2f;
 
     [SerializeField] private float RotCamSpeed = 200f;
     Vector3 camToPlayerVec = Vector3.zero;
+    #endregion
 
-    //prefab
+    #region prefab
     [Header("[Player FX]")]
     [SerializeField] GameObject swingWeaponFX = null;
     [SerializeField] GameObject hitFX = null;
+    #endregion
 
-    //variables value
-    private float playerCurHp = 1000f;
+    #region variables value
+    private float playerCurHp = 0f;
     private float axisX = 0f;
     private float axisZ = 0f;
     private float mouseX = 0f;
     private float mouseY = 0f;
 
+    Vector3 lookForward = Vector3.zero;
+    Vector3 lookRight = Vector3.zero;
+    Vector3 moveDir = Vector3.zero;
+
     private float speed = 0f;
     private Vector3 newPosition = Vector3.zero;
 
     GameObject targetObject = null;
+    #endregion
 
-    //state check value
-    private bool camLockOn = false;
+    #region state check value
     private bool isRun = false;
-    private bool isNormalAttack = false;
-    private bool isSpecialAttack = false;
     private bool isAttacking = false;
+    private bool isDead = false;
+    #endregion
 
-    //transition value
+    #region transition value
+    Coroutine jumpCoroutine = null;
     Coroutine curCoroutine = null;
     STATE curState;
+    #endregion
 
     private void Awake()
     {
-        //components
+        #region ref components
         playerTransform = this.GetComponent<Transform>();
         playerRigidbody = this.GetComponent<Rigidbody>();
         playerAnimator = this.GetComponent<Animator>();
         camTransfrom = GameObject.Find("CameraArm").GetComponent<Transform>();
         weaponCollider = GameObject.Find("WeaponCollider");
         playerEvent = this.GetComponent<EventReciever>();
+        #endregion
 
-        //deligate chain
-        playerEvent.callBackAttackStartEvent += TrunOnWeaponColl;
-        playerEvent.callBackAttackStartEvent += InAttacking;
-
-        playerEvent.callBackAttackEndEvent += TrunOffWeaponColl;
-        playerEvent.callBackAttackStartEvent += OutAttacking;
-    }
-
-    private void TrunOffWeaponColl()
-    {
-        weaponCollider.SetActive(false);
-    }
-    private void TrunOnWeaponColl()
-    {
-        weaponCollider.SetActive(true);
-    }
-    private void InAttacking()
-    {
-        isAttacking = true;
-    }
-    private void OutAttacking()
-    {
-        isAttacking = false;
+        #region deligate chain
+        playerEvent.callBackAttackStartEvent += OnAttackStart;
+        playerEvent.callBackAttackEndEvent += OnAttackEnd;
+        playerEvent.callBackEnableTransferDamageEvent += OnWeaponCollider;
+        playerEvent.callBackDisableTransferDamageEvent += OffWeaponCollider;
+        #endregion
     }
 
     private void Start()
     {
+        #region initializing
+        //cursor lock
+        Cursor.lockState = CursorLockMode.Locked;
+
         //live dragon list init
-        for (int i = 0; i < FindObjectsOfType<Fruitragon>().Length; i++)
+        for (int i = 0; i < FindObjectsOfType<Dragon>().Length; i++)
         {
-            liveDragon.Add(FindObjectsOfType<Fruitragon>()[i].gameObject);
+            liveDragon.Add(FindObjectsOfType<Dragon>()[i].gameObject);
         }
 
         //constant value
         camToPlayerVec = playerTransform.position - camTransfrom.position;
 
+        //visible value
+        lookForward = new Vector3(camTransfrom.forward.x, 0f, camTransfrom.forward.z).normalized;
+        lookRight = new Vector3(camTransfrom.right.x, 0f, camTransfrom.right.z).normalized;
+        moveDir = lookForward * axisZ + lookRight * axisX;
+
         //move position value
         newPosition = this.transform.position;
+
+        //player state
+        playerCurHp = playerMaxHp;
 
         //state value
         curState = STATE.NONE;
@@ -112,6 +116,7 @@ public class Player : MonoBehaviour
 
         //start state
         ChangeState(STATE.IDLE);
+        #endregion
     }
 
     private void Update()
@@ -120,67 +125,74 @@ public class Player : MonoBehaviour
         InputControll();
     }
 
+    #region Position Controll
     private void InputControll()//keyboard and mouse input controll
     {
-        //keybarod move input
-        axisX = Input.GetAxis("Horizontal");
-        axisZ = Input.GetAxis("Vertical");
-
-        //shift input
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (!isAttacking)
         {
-            isRun = true;
-        }
-        else
-        {
-            isRun = false;
+            //keybarod move input
+            axisX = Input.GetAxis("Horizontal");
+            axisZ = Input.GetAxis("Vertical");
+
+            //mouse view input
+            if (!GameManager.INSTANCE.ISLOCKON)
+            {
+                mouseX += Input.GetAxis("Mouse X");
+                mouseY += Input.GetAxis("Mouse Y");
+            }
         }
 
-        //mouse view input
-        mouseX += Input.GetAxis("Mouse X");
-        mouseY += Input.GetAxis("Mouse Y");
+        //shift dash input
+        if (Input.GetKey(KeyCode.LeftShift)) isRun = true;
+        else isRun = false;
 
         //mouse left click input
-        if (Input.GetMouseButtonDown(0))
-        {
-            StopCoroutine(curCoroutine);
-            ChangeState(STATE.NORMALATTACK);
-        }
+        if (Input.GetMouseButtonDown(0)) playerAnimator.SetTrigger("isattack");
 
         //mouse right click input
-        if (Input.GetMouseButtonDown(1))
-        {
-            StopCoroutine(curCoroutine);
-            ChangeState(STATE.SPECIALATTACK);
-        }
+        if (Input.GetMouseButtonDown(1)) playerAnimator.SetTrigger("isspecialattack");
 
-        if (!camLockOn && Input.GetKeyDown(KeyCode.F))
+        //LockOn Input
+        if (!GameManager.INSTANCE.ISLOCKON && Input.GetKeyDown(KeyCode.F))
         {
-            camLockOn = true;
+            GameManager.INSTANCE.ISLOCKON = true;
             StartCoroutine(LockOn());
         }
-        else if (camLockOn && Input.GetKeyDown(KeyCode.F))
+        else if (GameManager.INSTANCE.ISLOCKON && Input.GetKeyDown(KeyCode.F))
         {
-            camLockOn = false;
+            GameManager.INSTANCE.ISLOCKON = false;
         }
     }
-    void CamTransFormControll()//camera transform controll
+
+    private void CamTransFormControll()//camera transform controll
     {
         camTransfrom.position = playerTransform.position - camToPlayerVec;
+
         camTransfrom.rotation = Quaternion.Euler(-mouseY, mouseX, 0);
+
     }
+    #endregion
+
     #region LockOn Loop
     IEnumerator LockOn()//lockon coroutine
     {
         VisibleCheck();
-        Vector3 viewDir = (playerTransform.position - Camera.main.transform.position).normalized;
-        while (camLockOn)
+        Vector3 viewDir = (Camera.main.transform.forward).normalized;
+
+        while (GameManager.INSTANCE.ISLOCKON)
         {
             Vector3 targetDir = (targetObject.transform.position - playerTransform.position).normalized;
-            viewDir = Vector3.Lerp(viewDir, targetDir, Time.deltaTime);
+            viewDir = Vector3.Lerp(viewDir, targetDir, 0.08f);
 
             camTransfrom.rotation = Quaternion.LookRotation(viewDir);
             playerTransform.rotation = Quaternion.LookRotation(new Vector3(viewDir.x, 0f, viewDir.z));
+
+            if (targetObject.activeSelf == false)
+            {
+                GameManager.INSTANCE.ISLOCKON = false;
+                yield break;
+            }
+
             yield return null;
         }
     }
@@ -211,10 +223,11 @@ public class Player : MonoBehaviour
 
         if (shortistDis == float.MaxValue || targetObject == null)
         {
-            camLockOn = false;
+            GameManager.INSTANCE.ISLOCKON = false;
         }
     }
     #endregion
+
     #region State Transition
     //###############################################################################//
     //STATE value
@@ -223,9 +236,6 @@ public class Player : MonoBehaviour
         NONE,
         IDLE,
         MOVE,
-        NORMALATTACK,
-        SPECIALATTACK,
-        HIT,
         DIE,
         MAX
     }
@@ -244,6 +254,7 @@ public class Player : MonoBehaviour
     }
     IEnumerator STATE_IDLE()
     {
+        if (isDead) yield break;
         //animation
         playerAnimator.SetBool("ismove", false);
 
@@ -272,101 +283,116 @@ public class Player : MonoBehaviour
             playerAnimator.SetFloat("axisX", axisX);
             playerAnimator.SetFloat("axisZ", axisZ);
 
-            if (!camLockOn)//normal move
+            if (!GameManager.INSTANCE.ISLOCKON)//normal move
             {
                 //animation
                 playerAnimator.SetBool("islockon", false);
 
                 if (isRun)
                 {
-                    playerSpeed = 11f;
+                    playerSpeed = 1.1f;
                     speed = Mathf.Lerp(speed, 1f, 0.1f);//blendig value lerp
 
                     playerAnimator.SetFloat("speed", speed);
                 }
                 else
                 {
-                    playerSpeed = 3f;
+                    playerSpeed = 0.4f;
                     speed = Mathf.Lerp(speed, 0f, 0.1f);//blendig value lerp
 
                     playerAnimator.SetFloat("speed", speed);
                 }
 
                 //function
-                Vector3 lookForward = new Vector3(camTransfrom.forward.x, 0f, camTransfrom.forward.z).normalized;
-                Vector3 lookRight = new Vector3(camTransfrom.right.x, 0f, camTransfrom.right.z).normalized;
-                Vector3 moveDir = lookForward * axisZ + lookRight * axisX;
-
-                newPosition = moveDir * playerSpeed * Time.deltaTime;
-                playerRigidbody.position += newPosition;
-
+                lookForward = new Vector3(camTransfrom.forward.x, 0f, camTransfrom.forward.z).normalized;
+                lookRight = new Vector3(camTransfrom.right.x, 0f, camTransfrom.right.z).normalized;
+                
+                //move direction
+                if (axisX != 0 || axisZ != 0)
+                {
+                    moveDir = lookForward * axisZ + lookRight * axisX;
+                }
                 playerTransform.rotation = Quaternion.LookRotation(moveDir);
+
+                //move forward
+                newPosition = moveDir.normalized * playerSpeed * Time.deltaTime;
+                playerRigidbody.position += newPosition;
             }
             else//lockon move
             {
                 //animation
                 playerAnimator.SetBool("islockon", true);
 
-                //function
-                playerSpeed = 3f;
+                //move direction
+                lookForward = new Vector3(camTransfrom.forward.x, 0f, camTransfrom.forward.z).normalized;
+                lookRight = new Vector3(camTransfrom.right.x, 0f, camTransfrom.right.z).normalized;
+                moveDir = lookForward * axisZ + lookRight * axisX;
 
-                Vector3 lookForward = new Vector3(camTransfrom.forward.x, 0f, camTransfrom.forward.z).normalized;
-                Vector3 lookRight = new Vector3(camTransfrom.right.x, 0f, camTransfrom.right.z).normalized;
-                Vector3 moveDir = lookForward * axisZ + lookRight * axisX;
-
-                newPosition = moveDir * playerSpeed * Time.deltaTime;
+                //move forward
+                playerSpeed = 0.4f;
+                newPosition = (moveDir.normalized * playerSpeed * Time.deltaTime);
                 playerRigidbody.position += newPosition;
+                playerRigidbody.velocity = new Vector3(moveDir.x, playerRigidbody.velocity.y, moveDir.z);
             }
 
             if (axisX == 0 && axisZ == 0)
             {
                 ChangeState(STATE.IDLE);
+                yield break;
             }
 
             yield return null;
         }
     }
-    IEnumerator STATE_NORMALATTACK()
-    {
-        //animation
-        playerAnimator.SetTrigger("isattack");
-
-        //function
-        yield return null;
-        StartCoroutine("STATE_IDLE");
-    }
-    IEnumerator STATE_SPECIALATTACK()
-    {
-        //animation
-        playerAnimator.SetTrigger("isspecialattack");
-
-        //function
-        yield return null;
-        StartCoroutine("STATE_IDLE");
-    }
-    IEnumerator STATE_HIT()
-    {
-        ChangeState(STATE.IDLE);
-
-        yield return null;
-    }
     IEnumerator STATE_DIE()
     {
+        GameManager.INSTANCE.ISDEAD = true;
+        playerAnimator.SetTrigger("isdead");
         yield return null;
     }
     //###############################################################################//
     #endregion
 
-    public void TransferDamage(float damage)
+    #region Transfer Function
+    private void OnAttackStart()
     {
-        playerCurHp -= damage;
+        isAttacking = true;
+        //exception
+        axisX = 0f;
+        axisZ = 0f;
+    }
+    private void OnAttackEnd()
+    {
+        isAttacking = false;
+    }
+    private void OnWeaponCollider()
+    {
+        weaponCollider.SetActive(true);
+    }
+    private void OffWeaponCollider()
+    {
+        weaponCollider.SetActive(false);
+    }
+    public void PlayerTransferDamage(float damage)
+    {
+        if (isDead) return;
+
+        //animation
+        Debug.Log("Hi");
+        playerAnimator.SetTrigger("ishit");
 
         if (playerCurHp <= 0f)
         {
             playerCurHp = 0f;
+            isDead = true;
             ChangeState(STATE.DIE);
         }
 
-        ChangeState(STATE.HIT);
+        playerCurHp -= damage;
+
+        if (playerEvent.callBackPlayerHPChangeEvent != null)
+            playerEvent.callBackPlayerHPChangeEvent(playerCurHp, playerMaxHp);
+
     }
+    #endregion
 }

@@ -45,10 +45,10 @@ public class FollowWater : MonoBehaviour
         //            FollowPoint.x = MousePositionMaxX;
         //        }
 
-        //        if (FollowPoint.z >= MousePositionMaxZ)
-        //        {
-        //            FollowPoint.z = MousePositionMaxZ;
-        //        }
+                if (FollowPoint.x >= MousePositionMaxX)
+                {
+                    FollowPoint.x = MousePositionMaxX;
+                }
 
         //        Vector3 a = Camera.main.WorldToScreenPoint(FollowPoint);
         //        this.transform.position = Camera.main.ScreenToWorldPoint(a);

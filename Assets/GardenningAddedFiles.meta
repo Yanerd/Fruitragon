@@ -1,5 +1,9 @@
 fileFormatVersion: 2
-guid: a197ae7fb0d95d34780e2f27808ee296
+<<<<<<<< HEAD:Assets/GardenningAddedFiles.meta
+guid: bffeffb00c2124442a9f05e1aa2b986f
+========
+guid: 9a60b7e464350f547bdfa521f5169355
+>>>>>>>> origin/KHS:Assets/BackupPrefab.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

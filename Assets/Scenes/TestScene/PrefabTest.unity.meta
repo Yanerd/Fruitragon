@@ -1,5 +1,9 @@
 fileFormatVersion: 2
-guid: ef2e1f4204ed9bd4b986b01a18435e5a
+<<<<<<<< HEAD:Assets/Scenes/TestScene/PrefabTest.unity.meta
+guid: 16b2d7a8ffe29cb4b95db81ce482a992
+========
+guid: b976837b7b3c00d42854342356348aed
+>>>>>>>> origin/KHS:Assets/Scenes/DragonScene.unity.meta
 DefaultImporter:
   externalObjects: {}
   userData: 

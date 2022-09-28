@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class ObjectPoolingManager : MonoBehaviour
 {
-    #region ΩÃ±€≈Ê
+    #region SingleTon
 
     private static ObjectPoolingManager instance = null;
     public static ObjectPoolingManager inst
@@ -26,6 +26,13 @@ public class ObjectPoolingManager : MonoBehaviour
     }
 
     #endregion
+
+    [SerializeField] public int totalDragonCount;
+    [SerializeField] public int potatoDragonCount;
+    [SerializeField] public int AppleDragonCount;
+    [SerializeField] public int CabbageDragonCount;
+    [SerializeField] public int CarrotDragonCount;
+    [SerializeField] public int EggplantDragonCount;
 
     [SerializeField] public Transform PoolingZone;
 
@@ -97,47 +104,47 @@ public class ObjectPoolingManager : MonoBehaviour
 
     public void Objectapperear(Vector3 tr)
     {
-        if (ButtonManager.inst.OnHouse == true)
+        if(DefenseUIManager.INSTANCE.OnHouse == true)
         {
             InstAlphaObjects[5].transform.position = tr + new Vector3(0, 0.3f, 0);
             //InstAlphaObjects[5].SetActive(true);
         }
-        else if (ButtonManager.inst.OnWell == true)
+        else if (DefenseUIManager.INSTANCE.OnWell == true)
         {
             InstAlphaObjects[6].transform.position = tr + new Vector3(0, 0.3f, 0);
             //InstAlphaObjects[0].SetActive(true);
         }
-        else if (ButtonManager.inst.OnPotato == true)
+        else if (DefenseUIManager.INSTANCE.OnPotato == true)
         {
             InstAlphaObjects[0].transform.position = tr + new Vector3(0, 0.3f, 0);
             //InstAlphaObjects[0].SetActive(true);
         }
-        else if (ButtonManager.inst.OnApple==true)
+        else if (DefenseUIManager.INSTANCE.OnApple ==true)
         {
             InstAlphaObjects[1].transform.position = tr + new Vector3(0, 0.4f, 0);
             //InstAlphaObjects[0].SetActive(true);
         }
-        else if (ButtonManager.inst.OnCabbage == true)
+        else if (DefenseUIManager.INSTANCE.OnCabbage == true)
         {
             InstAlphaObjects[2].transform.position = tr + new Vector3(0, 0.4f, 0);
             //InstAlphaObjects[0].SetActive(true);
         }
-        else if (ButtonManager.inst.OnCarrot == true)
+        else if (DefenseUIManager.INSTANCE.OnCarrot == true)
         {
             InstAlphaObjects[3].transform.position = tr + new Vector3(0, 0.4f, 0);
             //InstAlphaObjects[0].SetActive(true);
         }
-        else if (ButtonManager.inst.OnEggplant == true)
+        else if (DefenseUIManager.INSTANCE.OnEggplant == true)
         {
             InstAlphaObjects[4].transform.position = tr + new Vector3(0, 0.5f, 0);
             //InstAlphaObjects[6].SetActive(true);
         }
-        else if (ButtonManager.inst.WaterRay == true)
+        else if (DefenseUIManager.INSTANCE.WaterRay == true)
         {
             InstAlphaObjects[7].transform.position = tr + new Vector3(0, 0.3f, 0);
 
         }
-        else if (ButtonManager.inst.OnWater == true)
+        else if (DefenseUIManager.INSTANCE.OnWater == true)
         {
             InstAlphaObjects[8].transform.position = tr + new Vector3(0, 0.3f, 0);
 
@@ -146,76 +153,51 @@ public class ObjectPoolingManager : MonoBehaviour
     public void ObjectDisappear()
     {
         
-        if (ButtonManager.inst.OnHouse == false)
+        if (DefenseUIManager.INSTANCE.OnHouse == false)
         {
             InstAlphaObjects[5].transform.position = PoolingZone.position;
             //InstAlphaObjects[5].SetActive(false);
         }
-        if (ButtonManager.inst.OnPotato == false)
+        if (DefenseUIManager.INSTANCE.OnPotato == false)
         {
             InstAlphaObjects[0].transform.position = PoolingZone.position;
             //InstAlphaObjects[0].SetActive(false);
         }
-        if (ButtonManager.inst.OnWell == false)
+        if (DefenseUIManager.INSTANCE.OnWell == false)
         {
             InstAlphaObjects[6].transform.position = PoolingZone.position;
            //InstAlphaObjects[6].SetActive(false);
         }
-        if (ButtonManager.inst.OnApple == false)
+        if (DefenseUIManager.INSTANCE.OnApple == false)
         {
             InstAlphaObjects[1].transform.position = PoolingZone.position;
             //InstAlphaObjects[6].SetActive(false);
         }
-        if (ButtonManager.inst.OnCabbage == false)
+        if (DefenseUIManager.INSTANCE.OnCabbage == false)
         {
             InstAlphaObjects[2].transform.position = PoolingZone.position;
             //InstAlphaObjects[6].SetActive(false);
         }
-        if (ButtonManager.inst.OnCarrot == false)
+        if (DefenseUIManager.INSTANCE.OnCarrot == false)
         {
             InstAlphaObjects[3].transform.position = PoolingZone.position;
             //InstAlphaObjects[6].SetActive(false);
         }
-        if (ButtonManager.inst.OnEggplant == false)
+        if (DefenseUIManager.INSTANCE.OnEggplant == false)
         {
             InstAlphaObjects[4].transform.position = PoolingZone.position;
             //InstAlphaObjects[6].SetActive(false);
         }
-        if (ButtonManager.inst.WaterRay == false)
+        if (DefenseUIManager.INSTANCE.WaterRay == false)
         {
             InstAlphaObjects[7].transform.position = PoolingZone.position;
 
         }
-        if (ButtonManager.inst.OnWater == false)
+        if (DefenseUIManager.INSTANCE.OnWater == false)
         {
             InstAlphaObjects[8].transform.position = PoolingZone.position;
 
         }
 
     }
-
-    
-
-
-   
-
-
-
-    
-
-
-
-
-
-
-
-
-
-    //=================================================
-
-
-
-
-
-    //=================================================
 }

@@ -1054,7 +1054,21 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.5749236
+      - time: 0.24337748
+        functionName: EnableDMGEvent
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 89f477cc947e72e46850cecc2dacbe10, type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.4997313
+        functionName: DisableDMGEvent
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 89f477cc947e72e46850cecc2dacbe10, type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 1
         functionName: AttackEndEvent
         data: 
         objectReferenceParameter: {fileID: 11500000, guid: 89f477cc947e72e46850cecc2dacbe10, type: 3}

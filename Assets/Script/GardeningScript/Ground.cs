@@ -14,17 +14,17 @@ public class Ground : MonoBehaviour
 
     int mask;
 
-    ButtonManager B;
+    DefenseUIManager B;
     void Start()
     {
         mr = GetComponent<MeshRenderer>();
-        B = FindObjectOfType<ButtonManager>();
+        B = FindObjectOfType<DefenseUIManager>();
         mask = 1 << 9 | 1 << 10|1<<6|1<<8|1<<7;
     }
     void Update()
     {
 
-        if (ButtonManager.inst.buildingMode == true)
+        if (DefenseUIManager.INSTANCE.buildingMode == true)
         {
             Camera.main.cullingMask = mask;
             if (OnBuilding == true)
@@ -41,7 +41,7 @@ public class Ground : MonoBehaviour
             }
             
         }
-        if (ButtonManager.inst.buildingMode == false)
+        if (DefenseUIManager.INSTANCE.buildingMode == false)
         {
             if (OnBuilding == true || OnAlpha == true)
             {

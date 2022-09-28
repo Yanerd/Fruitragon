@@ -6,15 +6,18 @@ public class Weapon : MonoBehaviour
 {
     private float damage = 10f;
 
-    void Update()
-    {
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Dragon"))
         {
-            other.SendMessage("TransferDamage",damage,SendMessageOptions.DontRequireReceiver);
+            Time.timeScale = 0.35f;
+            Invoke("TimeBack",0.1f);
+            other.SendMessage("DragonTransferDamage", damage,SendMessageOptions.DontRequireReceiver);
         }
+    }
+
+    private void TimeBack()
+    {
+        Time.timeScale = 1f;
     }
 }
