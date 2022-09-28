@@ -37,7 +37,7 @@ public class Dragon : MonoBehaviour
     GameObject newObj;
 
     // 드래곤이 바라볼 플레이어
-    Player targetPlayer;
+    PlayerController targetPlayer;
     // 애니메이션
     Animator myAnimation;
 
@@ -86,7 +86,7 @@ public class Dragon : MonoBehaviour
         myAnimation = GetComponent<Animator>();
 
         //player find
-        targetPlayer = FindObjectOfType<Player>();
+        targetPlayer = FindObjectOfType<PlayerController>();
 
         // 이펙트 찾아오기
         markObj = Instantiate(Eff_ExclamationMark, this.transform);

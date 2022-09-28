@@ -5,17 +5,16 @@ TagManager:
   serializedVersion: 2
   tags:
   - Dragon
-  - ground
+  - TargetObject
+  - GroundEmpty
   - plant
-  - Water
   - Building
   - well
   - Alpha
-  - GroundEmpty
-  - Weapon
-  - OnGround
   - WaterRay
-  - FxTemporaire
+  - Water
+  - OnGround
+  - Weapon
   layers:
   - Default
   - TransparentFX

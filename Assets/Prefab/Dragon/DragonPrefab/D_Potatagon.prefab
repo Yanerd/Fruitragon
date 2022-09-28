@@ -1333,6 +1333,7 @@ GameObject:
   - component: {fileID: 1336055915760193573}
   - component: {fileID: 1336055915760193572}
   - component: {fileID: 1336055915760193569}
+  - component: {fileID: 4995220554736877486}
   m_Layer: 0
   m_Name: D_Potatagon
   m_TagString: Dragon
@@ -1347,7 +1348,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1336055915760193568}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2.95, y: 0, z: 2.73}
   m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
   m_ConstrainProportionsScale: 0
@@ -1419,6 +1420,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92717c85e50b4cd489b49443dd7977a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dragonEvent: {fileID: 0}
   targetObjectPrefab: {fileID: 8421889873091476138, guid: 0d797b4224f1ce847a08c847e9266179, type: 3}
   Eff_ExclamationMark: {fileID: 6226749886801522148}
   Eff_Hit: {fileID: 3157822130174109226}
@@ -1435,6 +1437,18 @@ MonoBehaviour:
   curHP: 0
   maxHP: 40
   speed: 0.5
+--- !u!114 &4995220554736877486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1336055915760193568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89f477cc947e72e46850cecc2dacbe10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1336055915760193571
 GameObject:
   m_ObjectHideFlags: 0

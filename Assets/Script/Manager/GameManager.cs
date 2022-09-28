@@ -24,10 +24,9 @@ public class GameManager : MonoSingleTon<GameManager>
     #endregion
 
     #region Invasion Game Controll Value
-    public bool ISINVASIONMODE { get; set; }
     public float GAMETIME { get; set; }
     public int STEALCOIN { get; set; }
-    public bool ISGAMEOVER { get; set; }
+    public bool ISTIMEOVER { get; set; }
     #endregion
 
     // Start is called before the first frame update
@@ -39,7 +38,7 @@ public class GameManager : MonoSingleTon<GameManager>
     private void Initializing() //init function
     {
         //player state
-        GameManager.INSTANCE.ISDEAD = true;
+        GameManager.INSTANCE.ISDEAD = false;
         GameManager.INSTANCE.ISLOCKON = false;
 
         //invasion game value
@@ -54,13 +53,22 @@ public class GameManager : MonoSingleTon<GameManager>
         GameManager.INSTANCE.TOTALDRAGONCOUNT = 0;
         GameManager.INSTANCE.TOTALSEEDCOUNT = 0;
         GameManager.INSTANCE.TOTALBUILDINGCOUNT = 0;
-        GameManager.INSTANCE.TOTALCOIN = 0;
 
+        GameManager.INSTANCE.TOTALCOIN = 0;
+        
         //Invasion Game Controll Value
-        GameManager.INSTANCE.ISINVASIONMODE = false;
         GameManager.INSTANCE.GAMETIME = 0;
         GameManager.INSTANCE.STEALCOIN = 0;
+        GameManager.INSTANCE.ISTIMEOVER = false;
     }
+
+
+
+    private void Update()
+    {
+    }
+
+
 
     IEnumerator TimeCount() //invasion timer
     {
@@ -72,7 +80,7 @@ public class GameManager : MonoSingleTon<GameManager>
             {
                 CoinRavish();
                 Time.timeScale = 0f;
-                GameManager.INSTANCE.ISGAMEOVER = true;
+                GameManager.INSTANCE.ISTIMEOVER = true;
                 yield break;
             }
 
@@ -80,16 +88,16 @@ public class GameManager : MonoSingleTon<GameManager>
         }
     }
 
-    private void CoinRavish()//coin ravish calculation
+    public void CoinRavish()//coin ravish calculation
     {
         float stealCoinKillScale = 0f;
         float stealCoinSaboScale = 0f;
-        float killCoin = 0f;
-        float saboCoin = 0f;
+        float killCoinPoint = 0f;
+        float saboCoinPoint = 0f;
 
         //KillCoin scale calculation
         {
-            float numerator =   ((float)GameManager.INSTANCE.KILLCOUNT + (float)GameManager.INSTANCE.DESTROYBUILDINGCOUNT);
+            float numerator =   ((float)GameManager.INSTANCE.KILLCOUNT + (float)GameManager.INSTANCE.DESTROYPLANTCOUNT);
             float denominator = ((float)GameManager.INSTANCE.TOTALDRAGONCOUNT + (float)GameManager.INSTANCE.TOTALSEEDCOUNT);
             stealCoinKillScale = numerator / denominator;
         }
@@ -105,17 +113,17 @@ public class GameManager : MonoSingleTon<GameManager>
         {
             float numerator =   ((float)GameManager.INSTANCE.TOTALCOIN * stealCoinKillScale);
             float denominator = (20f);
-            killCoin =  numerator / denominator;
+            killCoinPoint =  numerator / denominator;
         }
 
         //sabo coin calculation
         {
             float numerator = ((float)GameManager.INSTANCE.TOTALCOIN * stealCoinSaboScale);
             float denominator = (20f);
-            saboCoin = numerator / denominator;
+            saboCoinPoint = numerator / denominator;
         }
 
         //real steal coin calculation
-        GameManager.INSTANCE.STEALCOIN = (int)(killCoin + saboCoin);
+        GameManager.INSTANCE.STEALCOIN = (int)(killCoinPoint + saboCoinPoint);
     }
 }

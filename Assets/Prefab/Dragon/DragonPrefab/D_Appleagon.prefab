@@ -1254,6 +1254,7 @@ GameObject:
   - component: {fileID: 1087916348772742326}
   - component: {fileID: 1087916348772742325}
   - component: {fileID: 1087916348772742324}
+  - component: {fileID: 4714967222444790137}
   m_Layer: 0
   m_Name: D_Appleagon
   m_TagString: Dragon
@@ -1268,7 +1269,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2393268566669939385}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -2.05, y: 0, z: -1.95}
   m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
   m_ConstrainProportionsScale: 0
@@ -1340,6 +1341,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92717c85e50b4cd489b49443dd7977a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dragonEvent: {fileID: 0}
   targetObjectPrefab: {fileID: 8421889873091476138, guid: 0d797b4224f1ce847a08c847e9266179, type: 3}
   Eff_ExclamationMark: {fileID: 5786755738992426430, guid: baa53b5035d52dc40b1f1d768a2eedd0, type: 3}
   Eff_Hit: {fileID: 3822302193924881853}
@@ -1356,6 +1358,18 @@ MonoBehaviour:
   curHP: 0
   maxHP: 40
   speed: 0.5
+--- !u!114 &4714967222444790137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2393268566669939385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89f477cc947e72e46850cecc2dacbe10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2393268566716859335
 GameObject:
   m_ObjectHideFlags: 0
