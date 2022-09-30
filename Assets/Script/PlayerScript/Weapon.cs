@@ -4,7 +4,18 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
-    private float damage = 10f;
+    //[SerializeField] weaponScriptableObj;
+
+    PlayerController playerController;
+
+    private float totalDamage = 0f;
+
+    private void Awake()
+    {
+        playerController = FindObjectOfType<PlayerController>();
+
+        totalDamage = playerController.PlayerAttackPower; //+ weaponScriptableObj.damage;
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -12,7 +23,7 @@ public class Weapon : MonoBehaviour
         {
             Time.timeScale = 0.35f;
             Invoke("TimeBack",0.1f);
-            other.SendMessage("DragonTransferDamage", damage,SendMessageOptions.DontRequireReceiver);
+            other.SendMessage("DragonTransferDamage", totalDamage, SendMessageOptions.DontRequireReceiver);
         }
     }
 

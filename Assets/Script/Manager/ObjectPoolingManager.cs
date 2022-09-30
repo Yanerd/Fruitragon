@@ -27,6 +27,12 @@ public class ObjectPoolingManager : MonoBehaviour
 
     #endregion
 
+    [SerializeField] public List<GameObject> potatoDragonList   = new List<GameObject>();
+    [SerializeField] public List<GameObject> appleDragonList    = new List<GameObject>();
+    [SerializeField] public List<GameObject> cabbageDragonList  = new List<GameObject>();
+    [SerializeField] public List<GameObject> carrotDragonList   = new List<GameObject>();
+    [SerializeField] public List<GameObject> eggplantDragonList = new List<GameObject>();
+   
     [SerializeField] public Transform PoolingZone;
 
     private List<GameObject> InstAlphaObjects = new List<GameObject>();//Save Alpha PrefabList

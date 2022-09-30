@@ -3222,7 +3222,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   txtInputField: {fileID: 2103886320}
   selectedBettingID: 
-  API_KEY: 6xzX8iXVTvQmf7LbZd5xTd
+  API_KEY: 5f3xufKK7tTPeATcC48CS2
   FullAppsProductionURL: https://odin-api.browseosiris.com
   FullAppsStagingURL: https://odin-api-sat.browseosiris.com
 --- !u!4 &2044445412

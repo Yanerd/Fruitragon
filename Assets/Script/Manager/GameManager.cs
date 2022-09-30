@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class GameManager : MonoSingleTon<GameManager>
 {
-    #region ohter clients offense vlaue
+    #region ohter clients offense value
     //player state value
     public bool ISLOCKON { get; set; }
     public bool ISDEAD { get; set; }
     
     //player invasion value
+    public bool WANTINVASION { get; set; }
     public int KILLCOUNT { get; set; }
     public int DESTROYPLANTCOUNT { get; set; }
     public int DESTROYBUILDINGCOUNT { get; set; }
@@ -17,6 +18,7 @@ public class GameManager : MonoSingleTon<GameManager>
 
     #region master clients defense value
     //master clients value
+    public bool INVASIONALLOW { get; set; }
     public int TOTALDRAGONCOUNT { get; set; }
     public int TOTALSEEDCOUNT { get; set; }
     public int TOTALBUILDINGCOUNT { get; set; }
@@ -24,6 +26,7 @@ public class GameManager : MonoSingleTon<GameManager>
     #endregion
 
     #region Invasion Game Controll Value
+    public bool ISDEFENSE { get; set; }
     public float GAMETIME { get; set; }
     public int STEALCOIN { get; set; }
     public bool ISTIMEOVER { get; set; }
@@ -41,34 +44,27 @@ public class GameManager : MonoSingleTon<GameManager>
         GameManager.INSTANCE.ISDEAD = false;
         GameManager.INSTANCE.ISLOCKON = false;
 
-        //invasion game value
-        GameManager.INSTANCE.STEALCOIN = 0;
-
         //player invasion value
+        GameManager.INSTANCE.WANTINVASION = false;
         GameManager.INSTANCE.KILLCOUNT = 0;
         GameManager.INSTANCE.DESTROYPLANTCOUNT = 0;
         GameManager.INSTANCE.DESTROYBUILDINGCOUNT = 0;
 
         //master clients value
+        GameManager.INSTANCE.INVASIONALLOW = false;
         GameManager.INSTANCE.TOTALDRAGONCOUNT = 0;
         GameManager.INSTANCE.TOTALSEEDCOUNT = 0;
         GameManager.INSTANCE.TOTALBUILDINGCOUNT = 0;
-
         GameManager.INSTANCE.TOTALCOIN = 0;
-        
+
         //Invasion Game Controll Value
+        GameManager.INSTANCE.ISDEFENSE = true;
         GameManager.INSTANCE.GAMETIME = 0;
         GameManager.INSTANCE.STEALCOIN = 0;
         GameManager.INSTANCE.ISTIMEOVER = false;
+
+        
     }
-
-
-
-    private void Update()
-    {
-    }
-
-
 
     IEnumerator TimeCount() //invasion timer
     {

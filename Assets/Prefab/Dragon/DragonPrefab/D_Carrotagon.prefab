@@ -1227,9 +1227,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7534934351545281951}
   - component: {fileID: 7432899435269314714}
+  - component: {fileID: 7432899435269314708}
   - component: {fileID: 7432899435269314715}
   - component: {fileID: 7534934351545282019}
-  - component: {fileID: 7432899435269314708}
   - component: {fileID: 3024318878882166032}
   m_Layer: 0
   m_Name: D_Carrotagon
@@ -1275,6 +1275,20 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!136 &7432899435269314708
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7432899435698594108}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.7
+  m_Height: 1.5
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.7, z: 0}
 --- !u!54 &7432899435269314715
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1313,21 +1327,7 @@ MonoBehaviour:
   dieEffectobj: {fileID: 3045957511295439493, guid: 28497c558652ae745bf951db459f31f9, type: 3}
   dieEffectobj2: {fileID: 5830000821426389369, guid: 8e26f273863430b40a01421d3d58e41d, type: 3}
   body: {fileID: 3237028408186185216}
-  dragonData: {fileID: 11400000, guid: 8d270db2465be4244bedf46342fb1324, type: 2}
---- !u!136 &7432899435269314708
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7432899435698594108}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.7
-  m_Height: 1.5
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.7, z: 0}
+  dragonData: {fileID: 11400000, guid: 5827e92c2b55e054bb0886dfe461707e, type: 2}
 --- !u!114 &3024318878882166032
 MonoBehaviour:
   m_ObjectHideFlags: 0

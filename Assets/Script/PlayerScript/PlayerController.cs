@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
     [Header("[Player Stats]")]
     [SerializeField] private float playerMaxHp = 1000f;
     [SerializeField] private float playerSpeed = 0.4f;
-    [SerializeField] private float playerAttackPower = 4f; 
+    [SerializeField] private float playerAttackPower = 4000f; 
     [SerializeField] private float playerAttackInterval = 2f;
 
     [SerializeField] private float RotCamSpeed = 200f;
@@ -61,6 +61,10 @@ public class PlayerController : MonoBehaviour
     Coroutine jumpCoroutine = null;
     Coroutine curCoroutine = null;
     STATE curState;
+    #endregion
+
+    #region property
+    public float PlayerAttackPower { get { return playerAttackPower; } }
     #endregion
 
     private void Awake()

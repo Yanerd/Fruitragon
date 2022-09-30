@@ -47,11 +47,14 @@ public class TargetObject : MonoBehaviour
         RandZpos = Random.Range(-2.5f, 3.5f);
 
         // 드래곤의 포지션
-        Vector3 dragonPos = dragon.transform.position;
+        if (dragon != null)
+        {
+            Vector3 dragonPos = dragon.transform.position;
 
-        // 오브젝트의 새로운 랜덤 생성 위치값
-        Vector3 RandPos = new Vector3(RandXpos, 0f, RandZpos);
-        newPos = dragonPos + RandPos;
+            // 오브젝트의 새로운 랜덤 생성 위치값
+            Vector3 RandPos = new Vector3(RandXpos, 0f, RandZpos);
+            newPos = dragonPos + RandPos;
+        }
 
         // 오브젝트의 위치는 새로운 위치
         transform.position = newPos;
