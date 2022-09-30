@@ -1254,13 +1254,13 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2733475677436705212}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 10
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &3564125694365481479
 MonoBehaviour:
@@ -1284,13 +1284,7 @@ MonoBehaviour:
   dieEffectobj: {fileID: 3045957511295439493, guid: 28497c558652ae745bf951db459f31f9, type: 3}
   dieEffectobj2: {fileID: 5830000821426389369, guid: 8e26f273863430b40a01421d3d58e41d, type: 3}
   body: {fileID: 4192540772125684240}
-  AttackInterval: 2
-  AttackRange: 0.25
-  TrackingRange: 1.5
-  AttackPower: 3
-  curHP: 0
-  maxHP: 40
-  speed: 0.5
+  dragonData: {fileID: 11400000, guid: 9b7d8c549430a594ba29d464754e6f2c, type: 2}
 --- !u!114 &7099520643549187941
 MonoBehaviour:
   m_ObjectHideFlags: 0

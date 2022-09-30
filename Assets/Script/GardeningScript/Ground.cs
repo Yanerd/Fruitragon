@@ -24,7 +24,7 @@ public class Ground : MonoBehaviour
     void Update()
     {
 
-        if (DefenseUIManager.INSTANCE.buildingMode == true)
+        if (DefenseUIManager.INSTANCE.BUILDINGMODE == true)
         {
             Camera.main.cullingMask = mask;
             if (OnBuilding == true)
@@ -41,7 +41,7 @@ public class Ground : MonoBehaviour
             }
             
         }
-        if (DefenseUIManager.INSTANCE.buildingMode == false)
+        if (DefenseUIManager.INSTANCE.BUILDINGMODE == false)
         {
             if (OnBuilding == true || OnAlpha == true)
             {

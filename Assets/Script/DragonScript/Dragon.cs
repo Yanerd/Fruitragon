@@ -45,13 +45,14 @@ public class Dragon : MonoBehaviour
 
     [Header("[드래곤 정보]")]
 
-    [SerializeField] float AttackInterval = 2f; // 공격 대기시간
-    [SerializeField] float AttackRange = 0.25f; // 공격 범위
-    [SerializeField] float TrackingRange = 1.5f; // 추적 범위
-    [SerializeField] float AttackPower = 3f; // 공격력
-    [SerializeField] float curHP = 0; // 현재 체력
-    [SerializeField] float maxHP = 40; // 최대 체력
-    [SerializeField] float speed = 0.5f; // 속도
+    [SerializeField] DragonData dragonData;
+    float AttackInterval;// 공격 대기시간
+    float AttackRange;// 공격 범위
+    float TrackingRange = 1.5f; // 추적 범위
+    float AttackPower;// 공격력
+    float curHP; // 현재 체력
+    float maxHP;// 최대 체력
+    float speed; // 속도
     float RandXpos;
     float RandZpos;
 
@@ -68,12 +69,23 @@ public class Dragon : MonoBehaviour
     bool IsDeath { get { return (curHP <= 0); } } // 죽었는지 체크
 
 
-
+    void initialing()
+    {
+        AttackInterval = dragonData.AttackInterval;
+        AttackRange = dragonData.AttackRange;
+        AttackPower = dragonData.AttackPower;
+        maxHP = dragonData.HP;
+        curHP = maxHP;
+        speed = dragonData.Speed;
+    }
 
 
 
     private void Awake()
     {
+        initialing();
+        //data.AttackPower
+
         //delegate
         dragonEvent = GetComponent<EventReciever>();
 

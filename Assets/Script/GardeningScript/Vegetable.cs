@@ -4,19 +4,23 @@ using UnityEngine;
 
 public class Vegetable : MonoBehaviour
 {
-    MeshRenderer myMeshRenderer;
 
+    [Header("VegetableObject")]
     [SerializeField] MeshRenderer Seed;
     [SerializeField] GameObject Stem;
     [SerializeField] GameObject Effect;
+
+    [Header("DropFruit")]
     [SerializeField] DropFruit[] fruit;
 
+    [Header("DragonPrefab")]
     [SerializeField] GameObject Dragon;
 
+    [Header("DragonState")]
     [SerializeField] public bool onWater=false;
+    [SerializeField] bool GrownDragon;
 
-    bool GrownDragon;
-  
+    
     public void startGrowth()
     {
         if (GrownDragon == true) return;
@@ -50,40 +54,36 @@ public class Vegetable : MonoBehaviour
     void InstantiateDragon()
     {
         GrownDragon = true;
-        ObjectPoolingManager.inst.Instantiate(Dragon, transform.position, Quaternion.Euler(0, -180f, 0), ObjectPoolingManager.inst.PoolingZone);
+        GameObject instDragon = ObjectPoolingManager.inst.Instantiate(Dragon, transform.position, Quaternion.Euler(0, -180f, 0), ObjectPoolingManager.inst.PoolingZone);
 
-        AllDragonCount(Dragon.name);
+        AllDragonCount(instDragon);
     }
-    void AllDragonCount(string prefabname)
+    void AllDragonCount(GameObject instDragon)
     {
-        ObjectPoolingManager.inst.totalDragonCount++;
-        if(prefabname=="PotatoDragon")
-        {
-            ObjectPoolingManager.inst.potatoDragonCount++;
-        }
-        else if(prefabname == "Applagon")
-        {
-            ObjectPoolingManager.inst.AppleDragonCount++;
-        }
-        else if (prefabname == "Carragon")
-        {
-            ObjectPoolingManager.inst.CarrotDragonCount++;
-        }
-        else if (prefabname == "Cabbagon")
-        {
-            ObjectPoolingManager.inst.CabbageDragonCount++;
-        }
-        else if (prefabname == "Eggplagon")
-        {
-            ObjectPoolingManager.inst.EggplantDragonCount++;
-        }
+        string prefabId = instDragon.name.Replace("(Clone)", "");
 
-
-
+        if (prefabId == "D_Potatagon")
+        {
+            DefenseUIManager.INSTANCE.potatoDragonList.Add(instDragon);
+        }
+        else if(prefabId == "D_Appleagon")
+        {
+            DefenseUIManager.INSTANCE.appleDragonList.Add(instDragon);
+        }
+        else if (prefabId == "D_Carrotagon")
+        {
+            DefenseUIManager.INSTANCE.carrotDragonList.Add(instDragon);
+        }
+        else if (prefabId == "D_Cabbagon")
+        {
+            DefenseUIManager.INSTANCE.cabbageDragonList.Add(instDragon);
+        }
+        else if (prefabId == "D_Eggplagon")
+        {
+            DefenseUIManager.INSTANCE.eggplantDragonList.Add(instDragon);
+        }
 
     }
-
-
 
     IEnumerator onEffect()
     {
@@ -93,6 +93,7 @@ public class Vegetable : MonoBehaviour
     }
 
    
+
 
 
 

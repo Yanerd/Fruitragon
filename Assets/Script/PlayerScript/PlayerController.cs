@@ -180,7 +180,7 @@ public class PlayerController : MonoBehaviour
         VisibleCheck();
         Vector3 viewDir = (Camera.main.transform.forward).normalized;
 
-        while (GameManager.INSTANCE.ISLOCKON)
+        while (GameManager.INSTANCE.ISLOCKON)/////////////////////////////////////////////////////////////////////////////////////target missing exception
         {
             if(targetObject == null) GameManager.INSTANCE.ISLOCKON = false;
 

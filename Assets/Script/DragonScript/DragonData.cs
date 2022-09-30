@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[CreateAssetMenu(fileName ="Dragon Data", menuName = "Scriptavle Object/Dragon Data",order =int.MaxValue)]
+[CreateAssetMenu(fileName = "Dragon Data", menuName = "Scriptavle Object/Dragon Data", order = -1)]
 public class DragonData : ScriptableObject
 {
-
     //타입
     [SerializeField]
     private string dragonType;
@@ -17,6 +16,16 @@ public class DragonData : ScriptableObject
     private float attackPower;
     public float AttackPower { get { return attackPower; } }
 
+    //공격 범위
+    [SerializeField]
+    private float attackRange;
+    public float AttackRange { get { return attackRange; } }
+
+    //공격 주기
+    [SerializeField]
+    private float attackInterval;
+    public float AttackInterval { get{ return attackInterval; } }
+        
     //체력
     [SerializeField]
     private float hp;
@@ -32,15 +41,22 @@ public class DragonData : ScriptableObject
     private float scale;
     public float Scale { get { return scale; } }
 
-    //성장시간
-    [SerializeField]
-    private int growTime;
-    public int GrowTime { get { return growTime; } }
-
     //등급
     [SerializeField]
     private int rare;
     public int Rare { get { return rare; } }
+
+    //판매 가격
+    [SerializeField]
+    private int saleprice;
+    public int SalePrice { get{ return saleprice; } }
+
+    //킬 포인트
+    [SerializeField]
+    private int killPoint;
+    public int KillPoint { get{ return killPoint; } }
+
+   
 
 
     // 업그레이드 
@@ -55,6 +71,5 @@ public class DragonData : ScriptableObject
     [SerializeField]
     private float upgradeScale;
     public float UpgradeScale { get { return upgradeScale; } }
-
 
 }

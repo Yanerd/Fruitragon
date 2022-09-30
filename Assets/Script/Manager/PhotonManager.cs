@@ -1,10 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class PhotonManager : MonoBehaviour
+public class PhotonManager : MonoBehaviourPunCallbacks
 {
-    // Start is called before the first frame update
+    private void Awake()
+    {
+        //Screen.SetResolution(1920, 1080);
+    }
     void Start()
     {
         
