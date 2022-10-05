@@ -108,7 +108,7 @@ public class Dragon : MonoBehaviour
         Face.SetActive(true);
         Hit_Face.SetActive(false);
 
-
+        
 
 
         // 타겟 오브젝트 첫 위치지정 및 생성(프리팹, 위치, 회전)
@@ -117,7 +117,6 @@ public class Dragon : MonoBehaviour
         // 타겟 오브젝트를 배열로 여러개 생성한 뒤
         // 각 순서에 맞는 자기 공을 찾아가도록 해준다.
         // 드래곤 생성 시 같은 순서를 찾아가도록 해줘야 하는데?
-
     }
 
 
@@ -187,6 +186,7 @@ public class Dragon : MonoBehaviour
 
     public void DragonTransferDamage(float attackPower) // 플레이어의 공격이 들어오면 체력 감소
     {
+        
         // 이미 죽었으면 리턴
         if (IsDeath) return;
 

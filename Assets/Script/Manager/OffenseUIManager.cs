@@ -59,7 +59,12 @@ public class OffenseUIManager : MonoBehaviour
     TextMeshProUGUI RANK;
 
 
-
+    private void OnEnable()
+    {
+        //cursor lock
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+    }
 
     private void Awake()
     {
@@ -132,6 +137,11 @@ public class OffenseUIManager : MonoBehaviour
         GameEndControll();
     }
 
+    private void OnDisable()
+    {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+    }
 
     private void PlayerUIControll()
     {
@@ -160,13 +170,6 @@ public class OffenseUIManager : MonoBehaviour
         else if (!GameManager.INSTANCE.ISLOCKON)
         {
             curCoroutine = StartCoroutine(ProductionOff());
-        }
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            Cursor.lockState = CursorLockMode.None;
-            AsyncOperation asyncOperation = SceneManager.LoadSceneAsync("DefenseScene");
-            asyncOperation.allowSceneActivation = true;
         }
     }
     IEnumerator ProductionOn()

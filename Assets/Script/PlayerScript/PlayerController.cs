@@ -89,8 +89,6 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         #region initializing
-        //cursor lock
-        Cursor.lockState = CursorLockMode.Locked;
 
         //live dragon list init
         for (int i = 0; i < FindObjectsOfType<Dragon>().Length; i++)

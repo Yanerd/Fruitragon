@@ -4,28 +4,42 @@ using UnityEngine.Networking;
 
 using TMPro;
 
-public class MetaTrendAPIHandler : MonoBehaviour
+public class MetaTrendAPIHandler : MonoSingleTon<MetaTrendAPIHandler>
 {
-	[SerializeField] TMP_InputField txtInputField;
+	public string USERNAME { get; set; }
+
 	[SerializeField] string selectedBettingID;
 
-
 	[Header("[등록된 프로젝트에서 획득가능한 API 키]")]
-	[Tooltip("이것은 http://odin-registration-sat.browseosiris.com/# 에 등록된 프로젝트를 통해서 획득할 수 있는 API Key 이다.\nhttps://odin-registration.browseosiris.com/ 는 Production URL")]
+    //https://odin-api-sat.browseosiris.com
+
+    [Tooltip("이것은 http://odin-registration-sat.browseosiris.com/# 에 등록된 프로젝트를 통해서 획득할 수 있는 API Key 이다.\nhttps://odin-registration.browseosiris.com/ 는 Production URL")]
 	[SerializeField] string API_KEY = "";
 
 
 	[Header("[Betting Backend Base URL")]
 	[SerializeField] string FullAppsProductionURL = "https://odin-api.browseosiris.com";
 	[SerializeField] string FullAppsStagingURL = "https://odin-api-sat.browseosiris.com";
-	//
-	// 현재 개발단계에 따라서 사용하는 BaseURL이 달라진다.
-	string getBaseURL()
-	{
-		// 프로덕션 단계라면
-		//return FullAppsProductionURL;
+    //
 
-		// 스테이징 단계(개발)라면
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(this.gameObject);
+    }
+
+    private void Start()
+    {
+		GetUserProfile();
+		GetSessionID();
+		Settings();
+
+	}
+
+
+    // 현재 개발단계에 따라서 사용하는 BaseURL이 달라진다.
+    string getBaseURL()
+	{
 		return FullAppsStagingURL;
 	}
 
@@ -33,114 +47,12 @@ public class MetaTrendAPIHandler : MonoBehaviour
 	Res_GetSessionID resGetSessionID = null;
 	Res_Settings resSettigns = null;
 
-	//
-	//
-	// Start is called before the first frame update
-	IEnumerator Start()
-    {
-		yield return null;
-		/*// 유저 정보
-		Res_GetUserProfile resGetUserProfile = null;
-		yield return requestGetUserInfo((response) =>
-		{
-			if (response != null)
-			{
-				Debug.Log("## " + response.Message);
-				resGetUserProfile = response;
-			}
-		});
-
-		// Session ID
-		Res_GetSessionID res_getSessionID = null;
-		yield return requestGetSessionID((response) =>
-		{
-			res_getSessionID = response;
-			if (res_getSessionID != null)
-				Debug.Log("## " + res_getSessionID.Message);
-		});
-
-		// Zera 잔고 확인
-		yield return requestZeraBalance(res_getSessionID.sessionId, (response) =>
-		{
-			if(response != null)
-			{
-				Debug.Log("## Response Zera Balance : " + response.data.balance);
-			}
-
-		});
-		// Ace 잔고 확인
-		yield return requestAceBalance(res_getSessionID.sessionId,(response) =>
-		{
-			if (response != null)
-			{
-				Debug.Log("## Response Ace Balance : " + response.data.balance);
-			}
-
-		});
-		// Dappx 잔고 확인
-		yield return requestDappXBalance(res_getSessionID.sessionId, (response) =>
-		{
-			if (response != null)
-			{
-				Debug.Log("## Response DappX Balance : " + response.data.balance);
-			}
-
-		});
-
-		Res_Settings resSettigns = null;
-		yield return requestSettings((response)=>
-		{
-			if(response != null)
-			{
-				Debug.Log("## Settings : " + response.message);
-				resSettigns = response;
-			}
-		});
-
-		// 베팅
-		ReqBettingPlaceBet reqBettingPlaceBet = new ReqBettingPlaceBet();
-		reqBettingPlaceBet.players_session_id = new string[] { res_getSessionID.sessionId };
-		reqBettingPlaceBet.bet_id = resSettigns.data.bets[0]._id;
-		yield return requestCoinPlaceBet(reqBettingPlaceBet, (response)=>
-		{
-			if (response != null)
-			{
-				Debug.Log("## CoinPlaceBet : " + response.message);
-			}
-		});
-
-		// 베팅 승자
-		ReqBettingDeclareWinner reqBettingDeclareWinner = new ReqBettingDeclareWinner();
-		reqBettingDeclareWinner.betting_id = resSettigns.data.bets[0]._id;
-		reqBettingDeclareWinner.winner_player_id = resGetUserProfile.userProfile._id;
-		yield return requestCoinDeclareWinner(reqBettingDeclareWinner, (response) =>
-		{
-			if (response != null)
-			{
-				Debug.Log("## CoinDeclareWinner : " + response.message);
-			}
-		});
-
-		// 베팅금액 반환
-		ReqBettingDisconnect reqBettingDisconnect = new ReqBettingDisconnect();
-		reqBettingDisconnect.betting_id = resSettigns.data.bets[0]._id;
-		yield return requestCoinDisconnect(reqBettingDisconnect, (response) =>
-		{
-			if (response != null)
-			{
-				Debug.Log("## CoinDisconnect : " + response.message);
-			}
-		});*/
-	}
-
-
-
-
+	
 
 	//-----------------------------------------------------------------------------------------------------
 	//
 	// 유저 정보
-	public void OnClick_GetUserProfile()
+	public void GetUserProfile()
 	{
 		StartCoroutine(processRequestGetUserInfo());
 	}
@@ -159,7 +71,7 @@ public class MetaTrendAPIHandler : MonoBehaviour
 	}
 
 	// Session ID
-	public void OnClick_GetSessionID()
+	public void GetSessionID()
 	{
 		StartCoroutine(processRequestGetSessionID());
 	}
@@ -178,7 +90,7 @@ public class MetaTrendAPIHandler : MonoBehaviour
 	}
 	//-----------------------------------------------------------------------------------------------------
 	// 베팅관련 셋팅 정보를 얻어오기
-	public void OnClick_Settings()
+	public void Settings()
 	{
 		StartCoroutine(processRequestSettings());
 	}
@@ -197,7 +109,7 @@ public class MetaTrendAPIHandler : MonoBehaviour
 
 	//-----------------------------------------------------------------------------------------------------
 	// Zera 잔고 확인
-	public void OnClick_ZeraBalance()
+	public void ZeraBalance()
 	{
 		StartCoroutine(processRequestZeraBalance());
 	}
@@ -214,7 +126,7 @@ public class MetaTrendAPIHandler : MonoBehaviour
 	}
 
 	// Ace 잔고 확인
-	public void OnClick_AceBalance()
+	public void AceBalance()
 	{
 		StartCoroutine(processRequestAceBalance());
 	}
@@ -232,7 +144,7 @@ public class MetaTrendAPIHandler : MonoBehaviour
 	}
 
 	// Dappx 잔고 확인
-	public void OnClick_DappXBalance()
+	public void DappXBalance()
 	{
 		StartCoroutine(processRequestDappXBalance());
 	}
@@ -253,7 +165,7 @@ public class MetaTrendAPIHandler : MonoBehaviour
 	//-----------------------------------------------------------------------------------------------------
 	//
 	// ZERA 베팅
-	public void OnClick_Betting_Zera()
+	public void Betting_Zera()
 	{
 		StartCoroutine(processRequestBetting_Zera());
 	}
@@ -274,7 +186,7 @@ public class MetaTrendAPIHandler : MonoBehaviour
 	}
 
 	// ZERA 베팅-승자
-	public void OnClick_Betting_Zera_DeclareWinner()
+	public void Betting_Zera_DeclareWinner()
 	{
 		StartCoroutine(processRequestBetting_Zera_DeclareWinner());
 	}
@@ -295,7 +207,7 @@ public class MetaTrendAPIHandler : MonoBehaviour
 	}
 
 	// 베팅금액 반환
-	public void OnClick_Betting_Zera_Disconnect()
+	public void Betting_Zera_Disconnect()
 	{
 		StartCoroutine(processRequestBetting_Zera_Disconnect());
 	}
@@ -346,7 +258,6 @@ delegate void resCallback_GetUserInfo(Res_GetUserProfile response);
 		yield return www.SendWebRequest();
 		
 		Debug.Log(www.downloadHandler.text); //json format
-		txtInputField.text = www.downloadHandler.text;
 
 		Res_GetUserProfile res_getUserProfile = JsonUtility.FromJson<Res_GetUserProfile>(www.downloadHandler.text);
 		callback(res_getUserProfile);
@@ -364,7 +275,6 @@ delegate void resCallback_GetUserInfo(Res_GetUserProfile response);
 		UnityWebRequest www = UnityWebRequest.Get("http://localhost:8546/api/getsessionid");
 		yield return www.SendWebRequest();
 		Debug.Log(www.downloadHandler.text);
-		txtInputField.text = www.downloadHandler.text;
 		Res_GetSessionID res_getSessionID = JsonUtility.FromJson<Res_GetSessionID>(www.downloadHandler.text);
 		callback(res_getSessionID);
 	}
@@ -388,7 +298,6 @@ delegate void resCallback_GetUserInfo(Res_GetUserProfile response);
 		www.SetRequestHeader("api-key", API_KEY);
 		yield return www.SendWebRequest();
 		Debug.Log(www.downloadHandler.text);
-		txtInputField.text = www.downloadHandler.text;
 		Res_BalanceInfo res = JsonUtility.FromJson<Res_BalanceInfo>(www.downloadHandler.text);
 		callback(res);
 		//UnityWebRequest www = new UnityWebRequest(URL);
@@ -406,7 +315,6 @@ delegate void resCallback_GetUserInfo(Res_GetUserProfile response);
 		www.SetRequestHeader("api-key", API_KEY);
 		yield return www.SendWebRequest();
 		Debug.Log(www.downloadHandler.text);
-		txtInputField.text = www.downloadHandler.text;
 		Res_BalanceInfo res = JsonUtility.FromJson<Res_BalanceInfo>(www.downloadHandler.text);
 		callback(res);
 		//UnityWebRequest www = new UnityWebRequest(URL);
@@ -426,7 +334,6 @@ delegate void resCallback_GetUserInfo(Res_GetUserProfile response);
 		www.SetRequestHeader("api-key", API_KEY);
 		yield return www.SendWebRequest();
 		Debug.Log(www.downloadHandler.text);
-		txtInputField.text = www.downloadHandler.text;
 		Res_BalanceInfo res = JsonUtility.FromJson<Res_BalanceInfo>(www.downloadHandler.text);
 		callback(res);
 		//UnityWebRequest www = new UnityWebRequest(URL);
@@ -443,18 +350,18 @@ delegate void resCallback_GetUserInfo(Res_GetUserProfile response);
 	delegate void resCallback_Settings(Res_Settings response);
 	IEnumerator requestSettings(resCallback_Settings callback)
 	{
-		string url = getBaseURL() + "/v1/betting/settings";
+        string url = getBaseURL() + "/v1/betting/settings";
 
 
-		UnityWebRequest www = UnityWebRequest.Get(url);
-		www.SetRequestHeader("api-key", API_KEY);
-		yield return www.SendWebRequest();
-		Debug.Log(www.downloadHandler.text);
-		txtInputField.text = www.downloadHandler.text;
-		Res_Settings res = JsonUtility.FromJson<Res_Settings>(www.downloadHandler.text);
-		callback(res);
-		//UnityWebRequest www = new UnityWebRequest(URL);
-	}
+        UnityWebRequest www = UnityWebRequest.Get(url);
+        Debug.Log(API_KEY);
+        www.SetRequestHeader("api-key", API_KEY);
+        yield return www.SendWebRequest();
+        Debug.Log(www.downloadHandler.text);
+        Res_Settings res = JsonUtility.FromJson<Res_Settings>(www.downloadHandler.text);
+        callback(res);
+        //UnityWebRequest www = new UnityWebRequest(URL);
+    }
 
 
 	//
@@ -477,7 +384,6 @@ delegate void resCallback_GetUserInfo(Res_GetUserProfile response);
 		yield return www.SendWebRequest();
 		
 		Debug.Log(www.downloadHandler.text);
-		txtInputField.text = www.downloadHandler.text;
 		ResBettingPlaceBet res = JsonUtility.FromJson<ResBettingPlaceBet>(www.downloadHandler.text);
 		callback(res);
 	}
@@ -502,7 +408,6 @@ delegate void resCallback_GetUserInfo(Res_GetUserProfile response);
 		yield return www.SendWebRequest();
 
 		Debug.Log(www.downloadHandler.text);
-		txtInputField.text = www.downloadHandler.text;
 		ResBettingDeclareWinner res = JsonUtility.FromJson<ResBettingDeclareWinner>(www.downloadHandler.text);
 		callback(res);
 	}
@@ -527,7 +432,6 @@ delegate void resCallback_GetUserInfo(Res_GetUserProfile response);
 		yield return www.SendWebRequest();
 
 		Debug.Log(www.downloadHandler.text);
-		txtInputField.text = www.downloadHandler.text;
 		ResBettingDisconnect res = JsonUtility.FromJson<ResBettingDisconnect>(www.downloadHandler.text);
 		callback(res);
 	}

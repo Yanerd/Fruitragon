@@ -33,13 +33,13 @@ public class StartManager : MonoBehaviour
         while (true)
         {
             Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, new Vector3(-2.72f, 4.25f, -2.72f), Time.deltaTime);
-            Debug.Log(Camera.main.transform.position.x);
             if (Camera.main.transform.position.x > -2.8f)
             {
                 for (int i = 0; i < ActiveFalsedObj.Length; i++)
                 {
                     ActiveFalsedObj[i].gameObject.SetActive(true);
                 }
+                GameManager.INSTANCE.SCENENUM = 1;
                 SceneManager.UnloadScene("1_StartScene");
             }
 

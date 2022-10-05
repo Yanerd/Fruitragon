@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class GameManager : MonoSingleTon<GameManager>
 {
-    #region ohter clients offense value
+    public int SCENENUM { get; set; }
+
+    #region Invader client offense value
     //player state value
     public bool ISLOCKON { get; set; }
     public bool ISDEAD { get; set; }
@@ -16,7 +18,7 @@ public class GameManager : MonoSingleTon<GameManager>
     public int DESTROYBUILDINGCOUNT { get; set; }
     #endregion
 
-    #region master clients defense value
+    #region defense client value
     //master clients value
     public bool INVASIONALLOW { get; set; }
     public int TOTALDRAGONCOUNT { get; set; }
@@ -26,13 +28,20 @@ public class GameManager : MonoSingleTon<GameManager>
     #endregion
 
     #region Invasion Game Controll Value
+    public bool ISGAMEIN { get; set; }
     public bool ISDEFENSE { get; set; }
     public float GAMETIME { get; set; }
     public int STEALCOIN { get; set; }
     public bool ISTIMEOVER { get; set; }
-    #endregion
+    #endregion 
 
-    // Start is called before the first frame update
+    Coroutine timerCoroutine = null;
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(this.gameObject);    
+    }
+
     void Start()
     {
         Initializing();
@@ -40,17 +49,19 @@ public class GameManager : MonoSingleTon<GameManager>
 
     private void Initializing() //init function
     {
+        GameManager.INSTANCE.SCENENUM = 0;
+
         //player state
         GameManager.INSTANCE.ISDEAD = false;
         GameManager.INSTANCE.ISLOCKON = false;
 
-        //player invasion value
+        //invader client value
         GameManager.INSTANCE.WANTINVASION = false;
         GameManager.INSTANCE.KILLCOUNT = 0;
         GameManager.INSTANCE.DESTROYPLANTCOUNT = 0;
         GameManager.INSTANCE.DESTROYBUILDINGCOUNT = 0;
 
-        //master clients value
+        //defense client value
         GameManager.INSTANCE.INVASIONALLOW = false;
         GameManager.INSTANCE.TOTALDRAGONCOUNT = 0;
         GameManager.INSTANCE.TOTALSEEDCOUNT = 0;
@@ -58,12 +69,21 @@ public class GameManager : MonoSingleTon<GameManager>
         GameManager.INSTANCE.TOTALCOIN = 0;
 
         //Invasion Game Controll Value
+        GameManager.INSTANCE.ISGAMEIN = false;
+
         GameManager.INSTANCE.ISDEFENSE = true;
         GameManager.INSTANCE.GAMETIME = 0;
         GameManager.INSTANCE.STEALCOIN = 0;
         GameManager.INSTANCE.ISTIMEOVER = false;
+    }
 
-        
+    public void TimerStart()
+    {
+        timerCoroutine = StartCoroutine(TimeCount());
+    }
+    public void TimeOut()
+    {
+        StopCoroutine(timerCoroutine);
     }
 
     IEnumerator TimeCount() //invasion timer

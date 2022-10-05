@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 
-public class MonoSingleTon<T>: MonoBehaviour where T: class, new()
+public class MonoSingleTon<T>: MonoBehaviourPunCallbacks where T: class, new()
 {
     private static T inst = null;
     private static object _lock = new object();  

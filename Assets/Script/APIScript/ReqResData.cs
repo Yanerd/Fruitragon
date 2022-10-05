@@ -62,7 +62,7 @@ public class Res_GetSessionID
 public class Res_BalanceInfo
 {
 	// 응답 결과
-	public string message;  // 
+	public string message;
 	[System.Serializable]
 	public class Balance
 	{

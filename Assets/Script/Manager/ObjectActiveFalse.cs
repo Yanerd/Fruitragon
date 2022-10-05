@@ -8,6 +8,10 @@ public class ObjectActiveFalse : MonoBehaviour
     void Start()
     {
         //first set active false for start scene
-        this.gameObject.SetActive(false);   
+        if (GameManager.INSTANCE.ISGAMEIN == false)
+        {
+            this.gameObject.SetActive(false);
+        }
+        
     }
 }

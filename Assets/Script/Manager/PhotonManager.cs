@@ -3,25 +3,38 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
+using Photon.Realtime;
 using TMPro;
 using Photon.Realtime;
 
-public class PhotonManager : MonoBehaviourPunCallbacks
+public class PhotonManager : MonoSingleTon<PhotonManager>
 {
+    [Header("TestNameField")]
+    [SerializeField] TMP_InputField testNameInput = null;
+
+    [Header("UICanvas")]
+    [SerializeField] GameObject photonUI;
+
+    [Header("Buttons")]
+    [SerializeField] Button invasionPermitButton;
+    [SerializeField] Button searchRoomButton;
 
     [Header("[ConnectViewPage]")]
     [SerializeField] GameObject connectViewPage = null;
     [SerializeField] TextMeshProUGUI connectInfo = null;
 
     [Header("RoomListPage")]
+    [SerializeField] Button refreshButton = null;
     [SerializeField] GameObject searchRoomPage = null;
+    [SerializeField] GameObject roomListSpot = null;
 
-    [Header("TestNameField")]
-    [SerializeField] TMP_InputField testNameInput = null;
-
-    //button
-    [SerializeField] Button searchRoomButton;
-
+    [Header("RoomPrefab")]
+    [SerializeField] GameObject roomPrefab = null;
+    [SerializeField] GameObject emptyRoomPrefab = null;
+    
+    //room list
+    List<GameObject> roomObjList = new List<GameObject>();
+    GameObject emptyRoomObj = null;
 
     Vector3 originCamearPos;
 
@@ -29,33 +42,50 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
     string testName;
 
-    Coroutine makingCoroutine;
-
-    //process check value
-    int process;
+    Coroutine connectingCoroutine;
 
     private void Awake()
     {
-        //process value init
-        process = 0;
+        DontDestroyOnLoad(this.gameObject);
 
         //Bring Camera Component
         originCamearPos = Camera.main.transform.position;
 
         //screen setting
-        Screen.SetResolution(1920, 1080, false);
-    }
+        Screen.SetResolution(1920, 1080, true);
 
+        //button interaction false
+        invasionPermitButton.interactable = false;
+        searchRoomButton.interactable = false;
+
+    }
     private void Start()
     {
         GameManager.INSTANCE.INVASIONALLOW = (GameManager.INSTANCE.INVASIONALLOW == false);
     }
-
     private void Update()//view real time connect
     {
         connectInfo.text = PhotonNetwork.NetworkClientState.ToString();
-        
-        //searchRoomPage에서 방 리스트 확인해서 네트워크 연결후 씬 전환(action Scene에서는 photon view 연결된 obj들 상호작용/ RPC를 통한 value 전달과 생성?)
+
+        //this parts detecting clients alived athor room successfully ->this clients be a invader
+        if (PhotonNetwork.InRoom && PhotonNetwork.CurrentRoom.PlayerCount == 2 && GameManager.INSTANCE.ISGAMEIN == false)
+        {
+            //Offense scene move -> invasion view
+            GameManager.INSTANCE.ISGAMEIN = true;
+            GameManager.INSTANCE.SCENENUM = 2;
+
+            PhotonNetwork.LoadLevel("3_OffenceScene");
+        }
+
+        //photon UI check
+        if (GameManager.INSTANCE.SCENENUM == 1)
+        {
+            photonUI.SetActive(true);
+        }
+        else
+        {
+            photonUI.SetActive(false);
+        }
     }
 
     public void OnInputChanged()//input feild name test
@@ -63,9 +93,13 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         Debug.Log(testNameInput.text.Length);
         if (testNameInput.text.Length < 10 && testNameInput.text.Length > 2)
         {
+            testName = testNameInput.text;
+            invasionPermitButton.interactable = true;
+            searchRoomButton.interactable = true;
+
             Debug.Log("Api 확인 (Id 확인됨)");
             Debug.Log("===============================================================");
-            testName = testNameInput.text;
+
         }
         else
         {
@@ -74,55 +108,117 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             Debug.Log("===============================================================");
         }
     }
-
-    #region Permit Invasion
-    //1.invasion allow make room and ready(takes benefit)
-    public void OnInvasionPermitButton()
+    public void OnInvasionPermitButton()//invasion allow, make a room and ready(takes benefit)
     {
         //invasion allow toggle
         GameManager.INSTANCE.INVASIONALLOW = (GameManager.INSTANCE.INVASIONALLOW == false);
 
-        if (GameManager.INSTANCE.INVASIONALLOW == true)
+        if (GameManager.INSTANCE.INVASIONALLOW)
         {
+            //button interactable
+            invasionPermitButton.interactable = false;
+            searchRoomButton.interactable = false;
+
             //make room and ready
-            Debug.Log("invasion allow : " + GameManager.INSTANCE.INVASIONALLOW);
-            makingCoroutine = StartCoroutine(RoomMakingProcess());
+            connectingCoroutine = StartCoroutine(RoomMakingProcess());
         }
-        else if(GameManager.INSTANCE.INVASIONALLOW == false)
+        else
         {
+            //button interactable
+            searchRoomButton.interactable = true;
+
             //network disconnect
-            Debug.Log("invasion allow : " + GameManager.INSTANCE.INVASIONALLOW);
             PhotonNetwork.Disconnect();
         }
     }
-
     IEnumerator RoomMakingProcess()
     {
         while (true)
         {
-            switch (process)
+            if (PhotonNetwork.IsConnected == false)//1. try master server connect
             {
-                case 0:
-                    PhotonNetwork.ConnectUsingSettings();
-                    break;
-                case 1:
+                PhotonNetwork.ConnectUsingSettings();
+            }
+            else
+            {
+                if (PhotonNetwork.InLobby == false)//2. try to join lobby
+                {
                     PhotonNetwork.JoinLobby();
-                    process = 2;
-                    break;
-                case 2:
-                    PhotonNetwork.CreateRoom(testName, new RoomOptions { MaxPlayers = 2 }, null);
-                    break;
-                case 3:
-                    StopCoroutine(makingCoroutine);
-                    break;
+                }
+                else
+                {
+                    if (PhotonNetwork.InRoom == false)//3. create room
+                    {
+                        PhotonNetwork.CreateRoom(testName, new RoomOptions { MaxPlayers = 2 }, null);
+                    }
+                    else 
+                    {
+                        yield break;
+                    }
+
+                }
             }
             yield return null;
         }
-        //2. master server connect and name check
+    }
+    public void OnGoOffenseButton()//go to search room for invasion 
+    {
+        GameManager.INSTANCE.WANTINVASION = (GameManager.INSTANCE.WANTINVASION == false);
+
+        if (GameManager.INSTANCE.WANTINVASION)
+        {
+            //button interactable controll
+            invasionPermitButton.interactable = false;
+            searchRoomButton.interactable = false;
+
+            //production
+            StartCoroutine(ClosUpCamera());
+            StartCoroutine(Uptrans(searchRoomPage));
+
+            //function
+            connectingCoroutine = StartCoroutine(SearchRoomProcess());
+        }
+        else
+        {
+            //button interactable controll
+            invasionPermitButton.interactable = true;
+
+            //production
+            StartCoroutine(FadeOutCamera());
+            StartCoroutine(Downtrans(searchRoomPage));
+
+            //function
+            PhotonNetwork.Disconnect();
+        }
+    }
+    IEnumerator SearchRoomProcess()
+    {
+        Debug.Log("입장중");
+        Debug.Log(PhotonNetwork.CountOfRooms);
+        Debug.Log(PhotonNetwork.CountOfPlayersInRooms);
+        while (true)
+        {
+            if (PhotonNetwork.IsConnected == false)//1. try master server connect
+            {
+                PhotonNetwork.ConnectUsingSettings();
+            }
+            else
+            {
+                if (PhotonNetwork.InLobby == false)//2. try to join lobby
+                {
+                    PhotonNetwork.JoinLobby();
+                }
+                else
+                {
+                    yield break;
+                }
+            }
+            yield return null;
+        }
     }
 
     #region network call back override
-    public override void OnConnectedToMaster()//process 0 
+    public override void OnConnectedToMaster()
     {
         base.OnConnectedToMaster();
 
@@ -131,23 +227,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         Debug.Log("UserName = " + PhotonNetwork.NickName);
         Debug.Log("InGame : 북풍이 불어옵니다...!");
         Debug.Log("===============================================================");
-        
-        process = 1;
     }
-
-    public override void OnDisconnected(DisconnectCause cause)//fail
-    {
-        base.OnDisconnected(cause);
-
-        Debug.Log("Server Disconnected");
-        Debug.Log("InGame : 북풍이 잦아듭니다...");
-        Debug.Log("===============================================================");
-        
-        process = 0;
-        StopCoroutine(makingCoroutine);
-    }
-
-    public override void OnJoinedLobby() //process 1
+    public override void OnJoinedLobby()
     {
         base.OnJoinedLobby();
 
@@ -155,24 +236,55 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         Debug.Log("InGame : 북풍이 거세게 불어옵니다..!");
         Debug.Log("===============================================================");
         
-        process = 2;
+        if (GameManager.INSTANCE.WANTINVASION)
+        {
+            searchRoomButton.interactable = true;
+        }
     }
-
-    public override void OnCreatedRoom()//process 2
+    public override void OnCreatedRoom()
     {
+        //base function
         base.OnCreatedRoom();
 
+        //debug
         Debug.Log("Room Created Success");
         Debug.Log("InGame : 손님을 맞이할 준비가 끝났습니다..!");
         Debug.Log("===============================================================");
 
-        Debug.Log(PhotonNetwork.CurrentRoom.Name);
-        Debug.Log(PhotonNetwork.CurrentRoom.PlayerCount);
-
-        process = 3;
+        //function
+        StopCoroutine(connectingCoroutine);
     }
+    public override void OnJoinedRoom()
+    {
+        //base function
+        base.OnJoinedRoom();
 
-    public override void OnCreateRoomFailed(short returnCode, string message)//fail
+        //debug
+        Debug.Log("Joined Room Success");
+        Debug.Log("InGame : 손님을 기다립니다..!");
+        Debug.Log("===============================================================");
+
+        //function
+        invasionPermitButton.interactable = true;
+    }
+    public override void OnDisconnected(DisconnectCause cause)//master server connecting failed
+    {
+        //base function
+        base.OnDisconnected(cause);
+
+        //debug
+        Debug.Log("Server Disconnected");
+        Debug.Log("InGame : 북풍이 잦아듭니다...");
+        Debug.Log("===============================================================");
+
+        //function
+        StopCoroutine(connectingCoroutine);
+
+        //button interactable controll
+        invasionPermitButton.interactable = true;
+        searchRoomButton.interactable = true;
+    }
+    public override void OnCreateRoomFailed(short returnCode, string message)//create room failed
     {
         base.OnCreateRoomFailed(returnCode, message);
 
@@ -180,21 +292,9 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         Debug.Log("InGame : 대문이 대차게 닫힙니다...");
         Debug.Log("===============================================================");
 
-        process = 0;
-        StopCoroutine(makingCoroutine);
+        StopCoroutine(connectingCoroutine);
     }
-    public override void OnJoinedRoom()// process 3
-    {
-        base.OnJoinedRoom();
-
-        Debug.Log("Joined Room Success");
-        Debug.Log("InGame : 손님을 기다립니다..!");
-        Debug.Log("===============================================================");
-        
-        process = 4;
-    }
-
-    public override void OnJoinRoomFailed(short returnCode, string message)//faild
+    public override void OnJoinRoomFailed(short returnCode, string message)//joinning room failded
     {
         base.OnJoinRoomFailed(returnCode, message);
 
@@ -202,48 +302,89 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         Debug.Log("InGame : 밥상을 걷어 찹니다...");
         Debug.Log("===============================================================");
 
-        process = 0;
-        StopCoroutine(makingCoroutine);
+        StopCoroutine(connectingCoroutine);
     }
-
-    #endregion
-    #endregion
-
-    #region Do Invasion
-
-    //if room is true 
-
-    public void OnGoOffenseButton()
+    public override void OnRoomListUpdate(List<RoomInfo> roomList)//update room obj info changed
     {
-        GameManager.INSTANCE.WANTINVASION = (GameManager.INSTANCE.WANTINVASION == false);
+        base.OnRoomListUpdate(roomList);
+
+        if (roomList.Count != 0 && roomObjList.Count != 0)//someting changed
+        {
+            for (int i = 0; i < roomList.Count; i++)//getting changed room list
+            {
+                for (int j = 0; j < roomObjList.Count; j++)//compare Obj list - changed room list
+                {
+                    if (roomObjList[j].GetComponent<RoomController>().ID == roomList[i].Name)
+                    {
+                        Destroy(roomObjList[j]);
+                        roomObjList.RemoveAt(j);
+                    }
+                }
+            }
+        }
 
         if (GameManager.INSTANCE.WANTINVASION)
         {
-            searchRoomButton.interactable = false;
-            StartCoroutine(ClosUpCamera());
-            StartCoroutine(Uptrans(searchRoomPage));
-            StartCoroutine(JoinRoomProcess());
+            if(connectingCoroutine != null)
+            {
+                StopCoroutine(connectingCoroutine);
+            }
+
+            if (roomList.Count != 0)//changed room list info write
+            {
+                for (int i = 0; i < roomList.Count; i++)
+                {
+                    if (roomList[i].PlayerCount> 0)
+                    {
+                        GameObject instRoom = Instantiate(roomPrefab, roomListSpot.transform);
+                        instRoom.GetComponent<RoomController>().RoomNameSetting(roomList[i].Name);
+                        instRoom.GetComponent<RoomController>().RoomInfoSetting(roomList[i].PlayerCount);
+                        roomObjList.Add(instRoom);
+                    }
+                }
+            }
         }
-        else
+
+        if (roomObjList.Count == 0)
         {
-            searchRoomButton.interactable = false;
-            StartCoroutine(FadeOutCamera());
-            StartCoroutine(Downtrans(searchRoomPage));
+            if (emptyRoomObj == null)
+            {
+                emptyRoomObj = Instantiate(emptyRoomPrefab, roomListSpot.transform);
+            }
+            else
+            {
+                emptyRoomObj.SetActive(true);
+            }
+        }
+        else 
+        {
+            if (emptyRoomObj != null)
+            {
+                emptyRoomObj.SetActive(false);
+            }
+        }
+        
+    }
+    public override void OnPlayerEnteredRoom(Player newPlayer)//this events called when New Player Detectied -> this clients have to be a defense game()  
+    {
+        base.OnPlayerEnteredRoom(newPlayer);
+
+        //Offense Scene Move -> defense view
+        if (GameManager.INSTANCE.ISGAMEIN == false)
+        {
+            GameManager.INSTANCE.ISGAMEIN = true;
+            GameManager.INSTANCE.SCENENUM = 2;
+            PhotonNetwork.LoadLevel("3_OffenceScene");
         }
     }
-
-    IEnumerator JoinRoomProcess()
+    public override void OnPlayerLeftRoom(Player otherPlayer)//this events called when New Player out -> go back to defense scene
     {
-        Debug.Log("입장중");
-        Debug.Log(PhotonNetwork.CountOfRooms);
-        Debug.Log(PhotonNetwork.CountOfPlayersInRooms);
+        base.OnPlayerLeftRoom(otherPlayer);
 
-        PhotonNetwork.JoinRandomRoom();
-        yield return null;
+        //scene changed
+        GameManager.INSTANCE.SCENENUM = 1;
+        PhotonNetwork.LoadLevel("2_DefenseScene");
     }
-
-
-
     #endregion
 
     #region Page Up&Down Coroutine
