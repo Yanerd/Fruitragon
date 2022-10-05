@@ -20,7 +20,11 @@ public class RayClick : MonoBehaviour
 
     private int mask; //cullingMask plag Save Value
     private int mask1;
+    private bool wellClick;
     private Vector3 FirstRayPosition; //FirstRay hit point Position
+
+
+    GameObject wellvalue;
 
     private void Awake()
     {
@@ -40,11 +44,11 @@ public class RayClick : MonoBehaviour
             Debug.DrawRay(ray.origin, ray.direction * 1000, Color.green);
             if (Physics.Raycast(ray, out hit, 1000f))
             {
-                if (hit.transform.name == "NoBuildingZone" || hit.transform.tag == "OnGround")
+                if (hit.transform.name == "NoBuildingZone" || hit.transform.tag == "OnGround" || hit.transform.name == "Boundary")
                 {
                     myCursor.noBuildingZoneCursor();
                 }
-                if(hit.transform.name == "UiZone")
+                if(hit.transform.name == "UiZone"|| hit.transform.name == "VegetableScroll" || hit.transform.name == "BuildingScroll" || hit.transform.name == "BackButton")
                 {
                     myCursor.BasicCursor();
                 }
@@ -146,40 +150,53 @@ public class RayClick : MonoBehaviour
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
+            Debug.DrawRay(ray.origin, ray.direction * 1000, Color.red);
             if (Physics.Raycast(ray, out hit, 1000))
             {
                 if (hit.transform.tag=="well")
                 {
-                    DefenseUIManager.INSTANCE.WATERRAY = true;
-                    myCursor.WarterCursor();
+                    hit.transform.GetComponent<WellBar>().FillValue = hit.transform.GetComponent<WellBar>().fillIdex.value;
+                    if (wellClick==false&& hit.transform.GetComponent<WellBar>().FillValue > 0)
+                    {
+                        hit.transform.gameObject.GetComponent<WellBar>().DisapearWaterCount();
+                        wellClick = true;
+
+                        DefenseUIManager.INSTANCE.WATERRAY = true;
+
+                        myCursor.WarterCursor();
+                    }
                 }
                 if (FirstRayPosition == Vector3.zero)
                 {
                     FirstRayPosition = hit.transform.position;
                 }
-                if (FirstRayPosition != hit.transform.position &&
-                hit.transform.gameObject.tag == "GroundEmpty" || hit.transform.gameObject.tag == "OnGround")
+                if(Physics.Raycast(ray, out hit, 100,mask))
                 {
-                    ObjectPoolingManager.inst.Objectapperear(hit.transform.position);
-                    FirstRayPosition = hit.transform.position;
+                    if (FirstRayPosition != hit.transform.position &&
+               hit.transform.gameObject.tag == "GroundEmpty" || hit.transform.gameObject.tag == "OnGround")
+                    {
+                        ObjectPoolingManager.inst.Objectapperear(hit.transform.position);
+
+                        FirstRayPosition = hit.transform.position;
+                    }
                 }
+               
             }
         }
         else if (Input.GetMouseButtonUp(0) && DefenseUIManager.INSTANCE.BUILDINGMODE == false && DefenseUIManager.INSTANCE.WATERRAY == true)
         {
             myCursor.BasicCursor();
-            
+            wellClick = false;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
             if (Physics.Raycast(ray, out hit, 1000,mask1))
             {
-                Debug.Log(hit.collider.tag);
                 if (hit.collider.tag=="plant")
                 {
                     if(hit.transform.gameObject.GetComponent<Vegetable>().onWater == false)
                     {
-                        hit.transform.gameObject.GetComponent<Vegetable>().startGrowth();
+                        hit.transform.gameObject.GetComponent<Vegetable>().StartGrowth();
                     }
                     DefenseUIManager.INSTANCE.WATERRAY = false;
                     ObjectPoolingManager.inst.ObjectDisappear();

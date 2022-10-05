@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 6074560474027886237}
   - component: {fileID: 8533197227026805997}
   - component: {fileID: 6455413700620159821}
+  - component: {fileID: 4068139240542967257}
   m_Layer: 8
   m_Name: Well
   m_TagString: well
@@ -94,6 +95,23 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!114 &4068139240542967257
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6074560474027886238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04b46497264a83248b554a9f765fa393, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wellBar: {fileID: 2252774642170279588, guid: 0fc698710adabcb4aafc7bfe0f98289a, type: 3}
+  water: {fileID: 6074560474507603824}
+  FillValue: 4
+  lerpSensive: 0.3
+  fillIdex: {fileID: 0}
 --- !u!1 &6074560474068347294
 GameObject:
   m_ObjectHideFlags: 0

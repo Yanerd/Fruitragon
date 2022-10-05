@@ -14703,9 +14703,9 @@ GameObject:
   - component: {fileID: 5046068837366913015}
   - component: {fileID: 5046068837365585879}
   - component: {fileID: 5046068837364618519}
-  - component: {fileID: 3706824358889034503}
-  - component: {fileID: 8908333016489603634}
   - component: {fileID: 2308026203740611330}
+  - component: {fileID: 8908333016489603634}
+  - component: {fileID: 3706824358889034503}
   m_Layer: 7
   m_Name: V_Cabbage
   m_TagString: plant
@@ -14779,6 +14779,35 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!54 &2308026203740611330
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5046068837366877143}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 0
+--- !u!65 &8908333016489603634
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5046068837366877143}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4, y: 0.3, z: 4}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &3706824358889034503
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14797,35 +14826,12 @@ MonoBehaviour:
   fruit: []
   Dragon: {fileID: 2733475677436705212, guid: f04b0a7c715cdbf48b4d6a5a98b2e0b4, type: 3}
   onWater: 0
---- !u!65 &8908333016489603634
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5046068837366877143}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 4, y: 0.3, z: 4}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!54 &2308026203740611330
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5046068837366877143}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 126
-  m_CollisionDetection: 0
+  GrownDragon: 0
+  growthBar: {fileID: 5445951183627535249, guid: 46099f270f87e714f8a3d63488ab08fa, type: 3}
+  waterCountBar: {fileID: 2437353987543457167, guid: cbf4ef562009b884aba06bde42ce326d, type: 3}
+  vegetableData: {fileID: 11400000, guid: da5106545353c39458031d81c6405c63, type: 2}
+  GrowthValue: 0
+  CountValue: 0
 --- !u!1 &5132971472027800666
 GameObject:
   m_ObjectHideFlags: 0

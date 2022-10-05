@@ -95,7 +95,7 @@ public class ObjectPoolingManager : MonoBehaviour
     {
         for (int i = 0; i < prefab.Length; i++)
         {
-            GameObject instObject = Instantiate(prefab[i], PoolingZone.position, Quaternion.identity);
+            GameObject instObject = Instantiate(prefab[i], PoolingZone.position, Quaternion.identity,GameObject.Find("AlphaPooling").transform);
             InstAlphaObjects.Add(instObject);
             //InstAlphaObjects[i].SetActive(false);
         }

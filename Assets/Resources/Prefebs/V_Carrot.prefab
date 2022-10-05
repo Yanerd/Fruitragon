@@ -134,6 +134,12 @@ MonoBehaviour:
   fruit: []
   Dragon: {fileID: 7432899435698594108, guid: b40700f664541fd44bc8783624ad391c, type: 3}
   onWater: 0
+  GrownDragon: 0
+  growthBar: {fileID: 5445951183627535249, guid: c3c32d2c18627dd4a9cf1e1e42123aba, type: 3}
+  waterCountBar: {fileID: 2437353987543457167, guid: f4e6213698a57f1458835fdc9f0fab45, type: 3}
+  vegetableData: {fileID: 11400000, guid: a28ebbc83598f0d4ebb87bfebdefbdc2, type: 2}
+  GrowthValue: 0
+  CountValue: 0
 --- !u!1 &5386590929565329321
 GameObject:
   m_ObjectHideFlags: 0
@@ -145,7 +151,6 @@ GameObject:
   - component: {fileID: 4722819455269567763}
   - component: {fileID: 8513220363946717878}
   - component: {fileID: 5891270820402726524}
-  - component: {fileID: 5891270820402726527}
   m_Layer: 7
   m_Name: Carrot
   m_TagString: plant
@@ -220,24 +225,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &5891270820402726527
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5386590929565329321}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9951aa317b9e854692da8e9d710620d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Seed: {fileID: 0}
-  Stem: {fileID: 8058257715302000656}
-  Effect: {fileID: 8058257715488305468}
-  fruit: []
-  Dragon: {fileID: 0}
-  onWater: 0
 --- !u!1 &8058257715302000656
 GameObject:
   m_ObjectHideFlags: 0

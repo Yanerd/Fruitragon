@@ -7,6 +7,10 @@ using UnityEngine.SceneManagement;
 
 public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
 {
+    [Header("Be A KING")]
+    [SerializeField] bool masterMode = false;
+    public bool invadePermit;
+
     #region Click Object Value
     [SerializeField] public bool BUILDINGMODE { get; set; } 
     [SerializeField] public bool onPOTATO     { get; set; }
@@ -20,85 +24,120 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
     [SerializeField] public bool WATERRAY     { get; set; }
     #endregion
 
-    #region Ui
-    [Header("[ UI ]")]
-    [SerializeField] GameObject GardeningMenu;
-    [SerializeField] GameObject BulidingModeMenu;
-    [SerializeField] GameObject StorePage;
-    //StorPage Func & Sell & purchase
+    #region All Ui
+
+    void UiInitializing()
+    {
+        //액티브 펄스 된 상태면 find로 못 찾아서 찾은 다음 펄스시킴
+
+        GardeningMenu = GameObject.Find("GardeningMenu");
+
+        BulidingModeMenu = GameObject.Find("BulidingModeMenu");
+
+        VegetableScroll = GameObject.Find("VegetableScroll");
+        VegetableScrollOpenButton = GameObject.Find("VegetableScrollOpenButton");
+        VegetableScrollCloseButton = GameObject.Find("VegetableScrollCloseButton");
+        VegetableScrollCloseButton.SetActive(false);
+
+        BuildingScroll = GameObject.Find("BuildingScroll");
+        BuildingScrollOpenButton = GameObject.Find("BuildingScrollOpenButton");
+        BuildingScrollCloseButton = GameObject.Find("BuildingScrollCloseButton");
+
+
+
+        BuildingScrollCloseButton.SetActive(false);
+
+        for (int i = 0; i < GameObject.Find("VegetableButton").transform.childCount; i++)
+        {
+            InstButton[i] = GameObject.Find("VegetableButton").transform.GetChild(i).gameObject;
+        }
+        InstButton[5] = GameObject.Find("HouseButton");
+        InstButton[6] = GameObject.Find("WellButton");
+
+        BulidingModeMenu.SetActive(false);
+
+        //StorePage/////////////////////////////////////////////////
+        StorePage = GameObject.Find("StorePage");
+
+        StoreVegetablePage = GameObject.Find("StoreVegetablePage");
+        VegetableScrollView = StoreVegetablePage.transform.GetChild(1);
+
+        StoreBuildingPage = GameObject.Find("StoreBuildingPage");
+        BuildingScrollView = StoreBuildingPage.transform.GetChild(1);
+
+        StoreGroundPage = GameObject.Find("StoreGroundPage");
+        GroundScrollView = StoreGroundPage.transform.GetChild(1);
+        GroundScrollView.gameObject.SetActive(false);
+        //----------------------------------------------------------
+        for (int i = 0; i < GameObject.Find("fence").transform.childCount; i++)
+        {
+            fence[i] = GameObject.Find("fence").transform.GetChild(i);
+        }
+
+        for (int i = 0; i < GameObject.Find("tree").transform.childCount; i++)
+        {
+            tree[i] = GameObject.Find("tree").transform.GetChild(i);
+        }
+
+    }
+
+    GameObject GardeningMenu;
+    GameObject BulidingModeMenu;
+    GameObject StorePage;
+
+    #region StorPage Func & Sell & purchase
     /////////////////////////////////////////////////
-    #region StorePage Menu
-    [Header("[Store Menu]")]
-    [SerializeField] Button StoreVegetablePage;
-    [SerializeField] GameObject VegetableScrollView;
+    GameObject StoreVegetablePage;
+    Transform VegetableScrollView;
 
-    [SerializeField] Button StoreBuildingPage;
-    [SerializeField] GameObject BuildingScrollView;
+    GameObject StoreBuildingPage;
+    Transform BuildingScrollView;
 
-    [SerializeField] Button StoreGroundPage;
-    [SerializeField] GameObject GroundScrollView;
-    #endregion
-    #region Vegetable Sell & Buy
-    [Header("[PotatoDraon & Seed]")]
-    [SerializeField] Button PotatoDragonSellButton;
-    [SerializeField] Button PotatoSeedBuyButton;
+    GameObject StoreGroundPage;
+    Transform GroundScrollView;
+
     [SerializeField] TextMeshProUGUI PotatoCount;
-
-    [Header("[AppleDraon & Seed]")]
-    [SerializeField] Button AppleDragonSellButton;
-    [SerializeField] Button AppleSeedBuyButton;
     [SerializeField] TextMeshProUGUI AppleCount;
-
-    [Header("[CabbageDraon & Seed]")]
-    [SerializeField] Button CabbageDragonSellButton;
-    [SerializeField] Button CabbageSeedBuyButton;
     [SerializeField] TextMeshProUGUI CabbageCount;
-
-    [Header("[CarrotDraon & Seed]")]
-    [SerializeField] Button CarrotDragonSellButton;
-    [SerializeField] Button CarrotSeedBuyButton;
     [SerializeField] TextMeshProUGUI CarrotCount;
-
-    [Header("[EggplantDraon & Seed]")]
-    [SerializeField] Button EggplantDragonSellButton;
-    [SerializeField] Button EggplantSeedBuyButton;
     [SerializeField] TextMeshProUGUI EggplantCount;
-    #endregion
-    #region Building,Ground Sell & Buy
-    [Header("Building & Ground Sell,Buy Button")]
-    [SerializeField] Button HouseSellButton;
-    [SerializeField] Button HouseBuyButton;
+
     [SerializeField] TextMeshProUGUI curHouseCount;
-
-    [SerializeField] Button WellSellButton;
-    [SerializeField] Button WellBuyButton;
     [SerializeField] TextMeshProUGUI curWellCount;
-
     [SerializeField] Button GroundBuyButton;
-    [SerializeField] TextMeshProUGUI curGroundState;
-    #endregion
-    [Header("Ground State")]
-    [SerializeField] GameObject[] fence;
-    [SerializeField] GameObject[] tree;
-    [SerializeField] int MapState;
+    [SerializeField] GameObject curGroundState;
+
+    [SerializeField] TextMeshProUGUI PotatoSeedCount;
+    [SerializeField] TextMeshProUGUI AppleSeedCount;
+    [SerializeField] TextMeshProUGUI CabbageSeedCount;
+    [SerializeField] TextMeshProUGUI CarrotSeedCount;
+    [SerializeField] TextMeshProUGUI EggplantSeedCount;
+
+    Transform[] fence = new Transform[5];
+    Transform[] tree = new Transform[4];
+    [SerializeField] public int MapState;
     /////////////////////////////////////////////////
+    #endregion
+
     #region BuildingMode Scroll & Button
-    [Header("[Vegetable Menu]")]
-    [SerializeField] GameObject VegetableScroll;
-    [SerializeField] GameObject VegetableScrollOpenButton;
-    [SerializeField] GameObject VegetableScrollCloseButton;
 
-    [Header("[Building Menu]")]
-    [SerializeField] GameObject BuildingScroll;
-    [SerializeField] GameObject BuildingScrollOpenButton;
-    [SerializeField] GameObject BuildingScrollCloseButton;
+    GameObject VegetableScroll;
+    GameObject VegetableScrollOpenButton;
+    GameObject VegetableScrollCloseButton;
 
-    [Header("BuildingMode inst Button")]
-    [SerializeField] Button[] InstButton;
+    GameObject BuildingScroll;
+    GameObject BuildingScrollOpenButton;
+    GameObject BuildingScrollCloseButton;
+
+    GameObject[] InstButton=new GameObject[7];
+
     #endregion
 
-    //object curCount
+    #region Object Amount
     /////////////////////////////////////////////////
+    [Header("[GameMoney(Zera)]")]
+    [SerializeField] TextMeshProUGUI GameMoney;
+    
     [Header("Cur DragonCount")]
     [SerializeField] TextMeshProUGUI curPotato;
     [SerializeField] TextMeshProUGUI curApple;
@@ -110,23 +149,37 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
     /////////////////////////////////////////////////
     #endregion
 
-    [Header("[GameMoney(Zera)]")]
-    [SerializeField] TextMeshProUGUI GameMoney;
+    #region Slider
 
-    //dragon data
-    /////////////////////////////////////////////////////
-    #region Dragon List
-
-    [SerializeField] public List<GameObject> potatoDragonList = new List<GameObject>();
-    [SerializeField] public List<GameObject> appleDragonList = new List<GameObject>();
-    [SerializeField] public List<GameObject> cabbageDragonList = new List<GameObject>();
-    [SerializeField] public List<GameObject> carrotDragonList = new List<GameObject>();
-    [SerializeField] public List<GameObject> eggplantDragonList = new List<GameObject>();
+    public List<Slider> SliderBarList = new List<Slider>();
 
     #endregion
+
+    //클릭 방지
+    bool onMenu;
+
+    #endregion
+
+    #region Dragon Data
+
+    #region Dragon List
+
+    public List<GameObject> potatoDragonList = new List<GameObject>();
+   public List<GameObject> appleDragonList = new List<GameObject>();
+   public List<GameObject> cabbageDragonList = new List<GameObject>();
+   public List<GameObject> carrotDragonList = new List<GameObject>();
+   public List<GameObject> eggplantDragonList = new List<GameObject>();
+
+    #endregion
+
     [SerializeField] DragonData[] dragonData = new DragonData[5];
     [SerializeField] VegetableData[] vegetableData = new VegetableData[5];
-    /////////////////////////////////////////////////////
+
+    #endregion
+
+
+    //test
+    private GameObject testCount = null;
 
     //GameManager value
     /////////////////////////////////////////////////////
@@ -135,24 +188,27 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
     int housePrice = 500;
     int wellPrice = 500;
 
-    int potatoSeedCount;
-    int appleSeedCount;
-    int cabbageSeedCount;
-    int carrotSeedCount;
-    int eggplantSeedCount;
-    int houseCount;
-    int wellCount;
+    int potatoSeedCount = 0;
+    int appleSeedCount = 0;
+    int cabbageSeedCount = 0;
+    int carrotSeedCount = 0;
+    int eggplantSeedCount = 0;
+    int houseCount = 0;
+    int wellCount = 0;
     /////////////////////////////////////////////////////
 
     CursorChange myCursor;
     Vector3 VegetableMenuOriginPos;
     Vector3 BuildingMenuOriginPos;
     Vector3 originMenuPos;
-    bool onMenu;
-
+   
     private void Awake()
     {
-        MapState = 5;
+        //test
+        //testCount = GameObject.Find("PotatoSeedCount");
+        //Debug.Log(testCount.GetComponent<TextMeshProUGUI>().text= "10");
+
+        //MapState = 5;
         Gold = 5000;
         GameMoney.text = Gold.ToString();
 
@@ -164,17 +220,41 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
         myCursor = FindObjectOfType<CursorChange>();
 
         //Reset Value
-        Initializing();
+        ValueInitializing();
+        UiInitializing();
 
         //Back to the Defense Scene transform initializing Scroll
-        VegetableMenuOriginPos = VegetableScroll.transform.position;
+        VegetableMenuOriginPos = VegetableScroll.gameObject.transform.position;
         BuildingMenuOriginPos = BuildingScroll.transform.position;
+
+    }
+
+    private void Update()
+    {
+        if (masterMode)
+        {
+            potatoSeedCount = 10;
+            appleSeedCount = 10;
+            cabbageSeedCount = 10;
+            carrotSeedCount = 10;
+            eggplantSeedCount = 10;
+            houseCount = 10;
+            wellCount = 10;
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+           
+        }
+
+
 
     }
 
     //Value Reset 
     /////////////////////////////////////////////////////
-    private void Initializing()
+    private void ValueInitializing()
     {
         DefenseUIManager.INSTANCE.onWELL = false;
         DefenseUIManager.INSTANCE.onPOTATO = false;
@@ -184,17 +264,23 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
         DefenseUIManager.INSTANCE.onCABBAGE = false;
         DefenseUIManager.INSTANCE.onCARROT = false;
         DefenseUIManager.INSTANCE.onEEGPLANT = false;
+
     }
+
+
+
     private void BringObjectCount()
     {
-        curGroundState.text = MapState.ToString();
-        PotatoCount.text = potatoDragonList.Count.ToString();
-        AppleCount.text = appleDragonList.Count.ToString();
-        CabbageCount.text = cabbageDragonList.Count.ToString();
-        CarrotCount.text = carrotDragonList.Count.ToString();
-        EggplantCount.text = eggplantDragonList.Count.ToString();
-        curHouseCount.text = houseCount.ToString();
-        curWellCount.text = wellCount.ToString();
+        curGroundState.GetComponent<TextMeshProUGUI>().text = MapState.ToString();
+
+        PotatoCount.GetComponent<TextMeshProUGUI>().text = potatoDragonList.Count.ToString();
+        AppleCount.GetComponent<TextMeshProUGUI>().text = appleDragonList.Count.ToString();
+        CabbageCount.GetComponent<TextMeshProUGUI>().text = cabbageDragonList.Count.ToString();
+        CarrotCount.GetComponent<TextMeshProUGUI>().text = carrotDragonList.Count.ToString();
+        EggplantCount.GetComponent<TextMeshProUGUI>().text = eggplantDragonList.Count.ToString();
+
+        curHouseCount.GetComponent<TextMeshProUGUI>().text = houseCount.ToString();
+        curWellCount.GetComponent<TextMeshProUGUI>().text = wellCount.ToString();
 
         curPotato.text = "Poato : " + potatoSeedCount.ToString();
         curApple.text = "Apple : " + appleSeedCount.ToString();
@@ -204,6 +290,13 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
         curWell.text = "Well : " + wellCount.ToString();
         curHouse.text = "House : " + houseCount.ToString();
         GameMoney.text = Gold.ToString();
+
+        PotatoSeedCount.text = "Seed : " + potatoSeedCount;
+        AppleSeedCount.text = "Seed : " + appleSeedCount;
+        CabbageSeedCount.text = "Seed : " + cabbageSeedCount;
+        CarrotSeedCount.text = "Seed : " + carrotSeedCount;
+        CarrotSeedCount.text = "Seed : " + carrotSeedCount;
+        EggplantSeedCount.text = "Seed : " + eggplantSeedCount;
     }
     /////////////////////////////////////////////////////
 
@@ -324,8 +417,13 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
         BringObjectCount();
         InstButtonTurnOff();
         BUILDINGMODE = true;
-        GardeningMenu.SetActive(false);
+        GardeningMenu.gameObject.SetActive(false);
         BulidingModeMenu.SetActive(true);
+        for (int i = 0; i < SliderBarList.Count; i++)
+        {
+            SliderBarList[i].gameObject.SetActive(false);
+        }
+
     }
     public void Back_buildingMode()
     {
@@ -342,57 +440,83 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
         VegetableScrollOpenButton.GetComponent<Button>().interactable = true;
 
         BUILDINGMODE = false;
-        GardeningMenu.SetActive(true);
+        GardeningMenu.gameObject.SetActive(true);
         BulidingModeMenu.SetActive(false);
-        Initializing();
+        ValueInitializing();
         ObjectPoolingManager.inst.ObjectDisappear();
+
         myCursor.BasicCursor();
+
+        for (int i = 0; i < SliderBarList.Count; i++)
+        {
+            SliderBarList[i].gameObject.SetActive(true);
+        }
+
+
     }
     void InstButtonTurnOff()
     {
         if (potatoSeedCount <= 0)
         {
-            InstButton[0].interactable = false;
+            InstButton[0].GetComponent<Button>().interactable = false;
         }
         else
         {
-            InstButton[0].interactable = true;
+            InstButton[0].GetComponent<Button>().interactable = true;
         }
 
         if (appleSeedCount <= 0)
         {
-            InstButton[1].interactable = false;
+            InstButton[1].GetComponent<Button>().interactable = false;
         }
         else
         {
-            InstButton[1].interactable = true;
+            InstButton[1].GetComponent<Button>().interactable = true;
         }
 
         if (cabbageSeedCount <= 0)
         {
-            InstButton[2].interactable = false;
+            InstButton[2].GetComponent<Button>().interactable = false;
         }
         else
         {
-            InstButton[2].interactable = true;
+            InstButton[2].GetComponent<Button>().interactable = true;
         }
 
         if (carrotSeedCount <= 0)
         {
-            InstButton[3].interactable = false;
+            InstButton[3].GetComponent<Button>().interactable = false;
         }
         else
         {
-            InstButton[3].interactable = true;
+            InstButton[3].GetComponent<Button>().interactable = true;
         }
 
         if (eggplantSeedCount <= 0)
         {
-            InstButton[4].interactable = false;
+            InstButton[4].GetComponent<Button>().interactable = false;
         }
         else
         {
-            InstButton[4].interactable = true;
+            InstButton[4].GetComponent<Button>().interactable = true;
+        }
+
+        if (houseCount <= 0)
+        {
+            InstButton[5].GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            InstButton[5].GetComponent<Button>().interactable = true;
+        }
+
+        if (wellCount <= 0)
+        {
+            InstButton[6].GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            InstButton[6].GetComponent<Button>().interactable = true;
         }
 
     }
@@ -408,6 +532,7 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
 
             if (page.transform.position.y >= 540f)
             {
+
                 yield break;
             }
         }
@@ -423,6 +548,11 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
 
             if (page.transform.position.y <= -540f)
             {
+                for (int i = 0; i < SliderBarList.Count; i++)
+                {
+                    SliderBarList[i].gameObject.SetActive(true);
+                }
+
                 yield break;
             }
         }
@@ -436,34 +566,35 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
     #region ClickStorePage
     public void ClickStoreVegetablePage()
     {
-        VegetableScrollView.SetActive(true);
-        BuildingScrollView.SetActive(false);
-        GroundScrollView.SetActive(false);
+        VegetableScrollView.gameObject.SetActive(true);
+        BuildingScrollView.gameObject.SetActive(false);
+        GroundScrollView.gameObject.SetActive(false);
 
-        StoreVegetablePage.interactable = false;
-        StoreBuildingPage.interactable = true;
-        StoreGroundPage.interactable = true;
+        StoreVegetablePage.GetComponent<Button>().interactable = false;
+        StoreBuildingPage.GetComponent<Button>().interactable = true;
+        StoreGroundPage.GetComponent<Button>().interactable = true;
     }
     public void ClickStoreBildingPage()
     {
-        BuildingScrollView.SetActive(true);
-        VegetableScrollView.SetActive(false);
-        GroundScrollView.SetActive(false);
+        BuildingScrollView.gameObject.SetActive(true);
+        VegetableScrollView.gameObject.SetActive(false);
+        GroundScrollView.gameObject.SetActive(false);
 
-        StoreVegetablePage.interactable = true;
-        StoreBuildingPage.interactable = false;
-        StoreGroundPage.interactable = true;
+        StoreVegetablePage.GetComponent<Button>().interactable = true;
+        StoreBuildingPage.GetComponent<Button>().interactable = false;
+        StoreGroundPage.GetComponent<Button>().interactable = true;
     }
     public void ClickStoreGroundPage()
     {
-        GroundScrollView.SetActive(true);
-        VegetableScrollView.SetActive(false);
-        BuildingScrollView.SetActive(false);
+        GroundScrollView.gameObject.SetActive(true);
+        VegetableScrollView.gameObject.SetActive(false);
+        BuildingScrollView.gameObject.SetActive(false);
 
-        StoreVegetablePage.interactable = true;
-        StoreBuildingPage.interactable = true;
-        StoreGroundPage.interactable = false;
+        StoreVegetablePage.GetComponent<Button>().interactable = true;
+        StoreBuildingPage.GetComponent<Button>().interactable = true;
+        StoreGroundPage.GetComponent<Button>().interactable = false;
     }
+
     #endregion
     #region SellObject
     public void SellPotatoDragon()
@@ -528,30 +659,36 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
         potatoSeedCount++;
         Gold -= vegetableData[0].PurchasePrice;
         GameMoney.text = Gold.ToString();
+        PotatoSeedCount.text = "Seed : " + potatoSeedCount;
+
     }
     public void BuyAppleSeed()
     {
         appleSeedCount++;
         Gold -= vegetableData[1].PurchasePrice;
         GameMoney.text = Gold.ToString();
+        AppleSeedCount.text = "Seed : " + appleSeedCount;
     }
     public void BuyCabbageSeed()
     {
         cabbageSeedCount++;
         Gold -= vegetableData[2].PurchasePrice;
         GameMoney.text = Gold.ToString();
+        CabbageSeedCount.text = "Seed : " + cabbageSeedCount;
     }
     public void BuyCarrotSeed()
     {
         carrotSeedCount++;
         Gold -= vegetableData[3].PurchasePrice;
         GameMoney.text = Gold.ToString();
+        CarrotSeedCount.text = "Seed : " + carrotSeedCount;
     }
     public void BuyEggplantSeed()
     {
         eggplantSeedCount++;
         Gold -= vegetableData[4].PurchasePrice;
         GameMoney.text = Gold.ToString();
+        EggplantSeedCount.text = "Seed : " + eggplantSeedCount;
     }
     public void BuyHouse()
     {
@@ -576,46 +713,47 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
 
         if (MapState == 5)
         {
-            fence[0].SetActive(false);
-            fence[1].SetActive(true);
-            tree[0].SetActive(false);
+            fence[0].transform.position = new Vector3(10, 10, 10);
+            fence[1].gameObject.SetActive(true);
+            tree[0].gameObject.SetActive(false);
             MapState = 4;
-            curGroundState.text = MapState.ToString();
+            curGroundState.GetComponent<TextMeshProUGUI>().text = MapState.ToString();
         }
         else if (MapState == 4)
         {
-            fence[1].SetActive(false);
-            fence[2].SetActive(true);
-            tree[1].SetActive(false);
+            fence[1].transform.position = new Vector3(10, 10, 10);
+            fence[2].gameObject.SetActive(true);
+            tree[1].gameObject.SetActive(false);
             MapState = 3;
-            curGroundState.text = MapState.ToString();
+            curGroundState.GetComponent<TextMeshProUGUI>().text = MapState.ToString();
         }
         else if (MapState == 3)
         {
-            fence[2].SetActive(false);
-            fence[3].SetActive(true);
-            tree[2].SetActive(false);
+            fence[2].transform.position = new Vector3(10, 10, 10);
+            fence[3].gameObject.SetActive(true);
+            tree[2].gameObject.SetActive(false);
             MapState = 2;
-            curGroundState.text = MapState.ToString();
+            curGroundState.GetComponent<TextMeshProUGUI>().text = MapState.ToString();
         }
         else if (MapState == 2)
         {
-            fence[3].SetActive(false);
-            fence[4].SetActive(true);
-            tree[3].SetActive(false);
+            fence[3].transform.position = new Vector3(10, 10, 10);
+            fence[4].gameObject.SetActive(true);
+            tree[3].gameObject.SetActive(false);
             MapState = 1;
-            curGroundState.text = MapState.ToString();
+            curGroundState.GetComponent<TextMeshProUGUI>().text = MapState.ToString();
         }
         else if (MapState == 1)
         {
-            fence[4].SetActive(false);
+            fence[4].transform.position = new Vector3(10, 10, 10);
 
             GroundBuyButton.interactable = false;
             MapState = 0;
-            curGroundState.text = MapState.ToString();
+            curGroundState.GetComponent<TextMeshProUGUI>().text = MapState.ToString();
         }
 
     }
+
     #endregion
     public void UpStorePage()
     {
@@ -626,12 +764,18 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
         }
         onMenu = true;
 
-        StoreVegetablePage.interactable = false;
-        BuildingScrollView.SetActive(false);
-        GroundScrollView.SetActive(false);
+        StoreVegetablePage.GetComponent<Button>().interactable = false;
+        BuildingScrollView.gameObject.SetActive(false);
+        GroundScrollView.gameObject.SetActive(false);
 
         BringObjectCount();
         StartCoroutine(Uptrans(StorePage));
+
+        for (int i = 0; i < SliderBarList.Count; i++)
+        {
+            SliderBarList[i].gameObject.SetActive(false);
+        }
+
     }
     public void DownStorePage()
     {
@@ -640,6 +784,10 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
             onMenu = false;
         ClickStoreVegetablePage();
         StartCoroutine(Downtrans(StorePage));
+        for (int i = 0; i < SliderBarList.Count; i++)
+        {
+            SliderBarList[i].gameObject.SetActive(true);
+        }
     }
     /////////////////////////////////////////////////////
     #region Select Building&Vegetable Button
@@ -780,6 +928,63 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
     #endregion
 
  
+    public void PhotonInstGround(Transform [] fence,Transform[] tree, int mapState)
+    {
+        if (mapState == 4)
+        {
+            fence[0].transform.position = new Vector3(10, 10, 10);
+            fence[1].gameObject.SetActive(true);
+            tree[0].gameObject.SetActive(false);
+        }
+        else if (mapState == 3)
+        {
+            fence[0].transform.position = new Vector3(10, 10, 10);
+            fence[1].transform.position = new Vector3(10, 10, 10);
+            fence[2].gameObject.SetActive(true);
+            tree[0].gameObject.SetActive(false);
+            tree[1].gameObject.SetActive(false);
+        }
+        else if (mapState == 2)
+        {
+            fence[0].transform.position = new Vector3(10, 10, 10);
+            fence[1].transform.position = new Vector3(10, 10, 10);
+            fence[2].transform.position = new Vector3(10, 10, 10);
+            fence[3].gameObject.SetActive(true);
+            tree[0].gameObject.SetActive(false);
+            tree[1].gameObject.SetActive(false);
+            tree[2].gameObject.SetActive(false);
+        }
+        else if (mapState == 1)
+        {
+            fence[0].transform.position = new Vector3(10, 10, 10);
+            fence[1].transform.position = new Vector3(10, 10, 10);
+            fence[2].transform.position = new Vector3(10, 10, 10);
+            fence[3].transform.position = new Vector3(10, 10, 10);
+            fence[4].gameObject.SetActive(true);
+
+            tree[0].gameObject.SetActive(false);
+            tree[1].gameObject.SetActive(false);
+            tree[2].gameObject.SetActive(false);
+            tree[3].gameObject.SetActive(false);
+        }
+        else if (mapState == 0)
+        {
+            fence[0].transform.position = new Vector3(10, 10, 10);
+            fence[1].transform.position = new Vector3(10, 10, 10);
+            fence[2].transform.position = new Vector3(10, 10, 10);
+            fence[3].transform.position = new Vector3(10, 10, 10);
+            fence[4].transform.position = new Vector3(10, 10, 10);
+            tree[0].gameObject.SetActive(false);
+            tree[1].gameObject.SetActive(false);
+            tree[2].gameObject.SetActive(false);
+            tree[3].gameObject.SetActive(false);
+        }
+
+    }
+
+
+
+
 
 
 }

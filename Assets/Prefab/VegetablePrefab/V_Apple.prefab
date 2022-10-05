@@ -452,9 +452,9 @@ GameObject:
   - component: {fileID: 2281894997039491024}
   - component: {fileID: 2281894997042391024}
   - component: {fileID: 2281894997041259824}
-  - component: {fileID: 2281894997042391027}
   - component: {fileID: 3326782334712317087}
   - component: {fileID: 8777969164700075575}
+  - component: {fileID: 2281894997042391027}
   m_Layer: 7
   m_Name: V_Apple
   m_TagString: plant
@@ -528,28 +528,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &2281894997042391027
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2281894997039004656}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9951aa317b9e854692da8e9d710620d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Seed: {fileID: 8799522058487964306}
-  Stem: {fileID: 640434446024757466}
-  Effect: {fileID: 2183850831407560954}
-  fruit:
-  - {fileID: 6477313359011260181}
-  - {fileID: 6477313360263971390}
-  - {fileID: 6477313360835746618}
-  - {fileID: 6477313360114483351}
-  Dragon: {fileID: 2393268566669939385, guid: 355fadb5c5e261a438faa0a734201607, type: 3}
-  onWater: 0
 --- !u!54 &3326782334712317087
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -579,6 +557,34 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 4, y: 0.5, z: 4}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2281894997042391027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2281894997039004656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9951aa317b9e854692da8e9d710620d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Seed: {fileID: 8799522058487964306}
+  Stem: {fileID: 640434446024757466}
+  Effect: {fileID: 2183850831407560954}
+  fruit:
+  - {fileID: 6477313359011260181}
+  - {fileID: 6477313360263971390}
+  - {fileID: 6477313360835746618}
+  - {fileID: 6477313360114483351}
+  Dragon: {fileID: 2393268566669939385, guid: 355fadb5c5e261a438faa0a734201607, type: 3}
+  onWater: 0
+  GrownDragon: 0
+  growthBar: {fileID: 5445951183627535249, guid: 46099f270f87e714f8a3d63488ab08fa, type: 3}
+  waterCountBar: {fileID: 2437353987543457167, guid: cbf4ef562009b884aba06bde42ce326d, type: 3}
+  vegetableData: {fileID: 11400000, guid: 239fe55c5f6baa141bb5548476a0c217, type: 2}
+  GrowthValue: 0
+  CountValue: 0
 --- !u!1 &4097924188831689330
 GameObject:
   m_ObjectHideFlags: 0

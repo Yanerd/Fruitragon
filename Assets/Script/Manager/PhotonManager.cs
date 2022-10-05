@@ -78,7 +78,7 @@ public class PhotonManager : MonoSingleTon<PhotonManager>
         }
 
         //photon UI check
-        if (GameManager.INSTANCE.SCENENUM == 1)
+        if (GameManager.INSTANCE.SCENENUM == 1 && DefenseUIManager.INSTANCE.BUILDINGMODE == false)
         {
             photonUI.SetActive(true);
         }

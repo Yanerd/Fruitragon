@@ -9908,8 +9908,8 @@ GameObject:
   - component: {fileID: 6086695565715005027}
   - component: {fileID: 6086695565714202179}
   - component: {fileID: 6086695565713104003}
-  - component: {fileID: 8406805196467800337}
   - component: {fileID: 8335251773993627298}
+  - component: {fileID: 8406805196467800337}
   - component: {fileID: 3286056629522593851}
   m_Layer: 7
   m_Name: V_Potato
@@ -9984,19 +9984,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &8406805196467800337
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6086695565715096131}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 4, y: 0.3, z: 4}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &8335251773993627298
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -10013,6 +10000,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!65 &8406805196467800337
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6086695565715096131}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4, y: 0.3, z: 4}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &3286056629522593851
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10031,6 +10031,12 @@ MonoBehaviour:
   fruit: []
   Dragon: {fileID: 1336055915760193568, guid: 4ed53cc1a1adc39448c7b0526ec19267, type: 3}
   onWater: 0
+  GrownDragon: 0
+  growthBar: {fileID: 5445951183627535249, guid: 46099f270f87e714f8a3d63488ab08fa, type: 3}
+  waterCountBar: {fileID: 2437353987543457167, guid: cbf4ef562009b884aba06bde42ce326d, type: 3}
+  vegetableData: {fileID: 11400000, guid: 257052a2a1e663b4b8cbe1bdf719988e, type: 2}
+  GrowthValue: 0
+  CountValue: 0
 --- !u!1 &6499576796353284793
 GameObject:
   m_ObjectHideFlags: 0
@@ -15338,7 +15344,6 @@ GameObject:
   - component: {fileID: 7410307332307429508}
   - component: {fileID: 5870838851624707873}
   - component: {fileID: 8547163166469510123}
-  - component: {fileID: 1522168035120294721}
   m_Layer: 7
   m_Name: Potato
   m_TagString: plant
@@ -15413,21 +15418,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &1522168035120294721
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7898579192111460926}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9951aa317b9e854692da8e9d710620d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Seed: {fileID: 0}
-  Stem: {fileID: 7501351011341118825}
-  Effect: {fileID: 4809979454484901108}
-  fruit: []
-  Dragon: {fileID: 0}
-  onWater: 0

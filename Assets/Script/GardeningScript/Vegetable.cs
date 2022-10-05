@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Vegetable : MonoBehaviour
 {
@@ -20,36 +21,206 @@ public class Vegetable : MonoBehaviour
     [SerializeField] public bool onWater=false;
     [SerializeField] bool GrownDragon;
 
-    
-    public void startGrowth()
+    [SerializeField] Slider growthBar = null;
+    [SerializeField] Slider waterCountBar = null;
+
+    [SerializeField] VegetableData vegetableData;
+    int  WaterCount;
+    float GrowthTime;
+    float OnSearchTime;
+    float LooseTime;
+    int PurchasePrice;
+
+    Camera myCamera;
+
+
+    [SerializeField] public float GrowthValue;
+    [SerializeField] public int CountValue;
+
+    bool instCheck = false;
+
+    Slider growBar;
+    Slider CountBar;
+    private void Awake()
     {
-        if (GrownDragon == true) return;
-            Debug.Log("자라나라");
-        StartCoroutine(GrowthSeed());
+        Initializing();
+
+        myCamera = Camera.main;
+
+        Vector3 sliderPos= myCamera.WorldToScreenPoint(this.transform.position + new Vector3(0, 0.5f, 0));
+        Vector3 CountPos = myCamera.WorldToScreenPoint(this.transform.position + new Vector3(0, 0.4f, 0));
+      
+        growBar = Instantiate(growthBar, sliderPos, Quaternion.identity, GameObject.Find("DefenseUI").transform);
+        CountBar= Instantiate(waterCountBar, CountPos, Quaternion.identity, GameObject.Find("DefenseUI").transform);
+        CountBar.transform.GetChild(1).GetChild(0).GetComponent<Image>().color = Color.cyan;
+
+        growBar.maxValue = 1;
+        growBar.minValue = 0;
+        growBar.value = 0;
+
+        CountBar.maxValue = WaterCount;
+        CountBar.minValue = 0;
+        CountBar.value = 0;
+        DefenseUIManager.INSTANCE.SliderBarList.Add(growBar);
+        DefenseUIManager.INSTANCE.SliderBarList.Add(CountBar);
     }
-    IEnumerator GrowthSeed()
+
+    private void OnEnable()
     {
-        yield return new WaitForSeconds(3f);
+        growBar.value = 0;
+        CountBar.value = 0;
+        CountBar.transform.GetChild(1).GetChild(0).GetComponent<Image>().color = Color.cyan;
+        growBar.gameObject.SetActive(true);
+        CountBar.gameObject.SetActive(true);
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.V))
+        {
+            //PhotonInstVegetable();
+        }
+    }
+
+
+
+
+
+    void Initializing()
+    {
+        if (vegetableData != null)
+        {
+            WaterCount = vegetableData.WaterCount;
+            GrowthTime = vegetableData.GrowthTime;
+            OnSearchTime = vegetableData.OnSearchTime;
+            LooseTime = vegetableData.LooseTime;
+            PurchasePrice = vegetableData.PurchasePrice;
+        }
+        else
+        {
+            Debug.Log("ref error");
+        }
+       
+    }
+
+
+    public void StartGrowth()
+    {
+        if (CountBar.value == WaterCount) return;
+
+        CountValue += 1;
+        CountBar.value = CountValue;
+
+        if (CountBar.value == WaterCount)
+        {
+            CountBar.transform.GetChild(1).GetChild(0).GetComponent<Image>().color = Color.red;
+            if (GrownDragon == true) return;
+            Debug.Log("자라나라");
+            StartCoroutine(GrowthSeed());
+        }
+    }
+
+    public void PhotonInstDefenseVegetable()
+    {
+        if (CountBar.value == WaterCount) return;
+
+        CountBar.value = CountValue;
+
+        if (CountBar.value == WaterCount)
+        {
+            CountBar.transform.GetChild(1).GetChild(0).GetComponent<Image>().color = Color.red;
+            if (GrownDragon == true) return;
+            Debug.Log("자라나라");
+            StartCoroutine(GrowthSeed());
+        }
+    }
+
+    public void PhotonInstOffenseVegetable(float growthValue, int countValue)
+    {
+        this.GrowthValue = growthValue;
+        this.CountValue = countValue;
+
+        growBar.gameObject.SetActive(false);
+        CountBar.gameObject.SetActive(false);
+
+        if (growthValue>=0.5f)
+        {
+            Seed.enabled = false;
+            Stem.gameObject.SetActive(true);
+        }
+
+    }
+
+
+
+    void StemStat()
+    {
         Seed.enabled = false;
         Stem.gameObject.SetActive(true);
-        
+
         StartCoroutine(onEffect());
         for (int i = 0; i < fruit.Length; i++)
         {
             fruit[i].SendMessage("dropObject", SendMessageOptions.DontRequireReceiver);
         }
-       
-        yield return new WaitForSeconds(3f);
-
+    }
+    void GrownState()
+    {
         StartCoroutine(onEffect());
 
         Stem.gameObject.SetActive(false);
 
-        if(GrownDragon == false)
+        if (GrownDragon == false)
         {
             InstantiateDragon();
         }
     }
+
+    IEnumerator GrowthSeed()
+    {
+        StartCoroutine(ValueChange());
+        bool SateStem = false;
+        bool SateGrown = false;
+        while (true)
+        {
+            if (growBar.value >= 0.5f&& SateStem==false)
+            {
+                StemStat();
+                SateStem = true;
+            }
+            if (growBar.value >= 1f&& SateGrown==false)
+            {
+                GrownState();
+                SateGrown = true;
+                yield break;
+            }
+
+            yield return null;
+        }
+       
+    }
+    IEnumerator ValueChange()
+    {
+        
+        while(true)
+        {
+            yield return new WaitForSeconds(1f);
+            GrowthValue += 0.1f;
+            growBar.value = GrowthValue;
+            if (DefenseUIManager.INSTANCE.invadePermit==true)
+            {
+                GrowthValue += 0.1f;
+                growBar.value = GrowthValue;
+            }
+            if(growBar.value>=1f)
+            {
+                growBar.gameObject.SetActive(false);
+                CountBar.gameObject.SetActive(false);
+                yield break;
+            }
+        }
+    }
+
 
     void InstantiateDragon()
     {

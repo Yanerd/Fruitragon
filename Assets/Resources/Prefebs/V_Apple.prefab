@@ -550,6 +550,12 @@ MonoBehaviour:
   - {fileID: 6477313360114483351}
   Dragon: {fileID: 2393268566669939385, guid: 355fadb5c5e261a438faa0a734201607, type: 3}
   onWater: 0
+  GrownDragon: 0
+  growthBar: {fileID: 5445951183627535249, guid: c3c32d2c18627dd4a9cf1e1e42123aba, type: 3}
+  waterCountBar: {fileID: 2437353987543457167, guid: f4e6213698a57f1458835fdc9f0fab45, type: 3}
+  vegetableData: {fileID: 11400000, guid: 239fe55c5f6baa141bb5548476a0c217, type: 2}
+  GrowthValue: 0
+  CountValue: 0
 --- !u!54 &3326782334712317087
 Rigidbody:
   m_ObjectHideFlags: 0
