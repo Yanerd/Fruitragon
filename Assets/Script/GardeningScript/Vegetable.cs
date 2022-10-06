@@ -120,9 +120,12 @@ public class Vegetable : MonoBehaviour
         }
     }
 
-    public void PhotonInstDefenseVegetable()
+    public void PhotonInstDefenseVegetable(float growthValue, int countValue)
     {
         if (CountBar.value == WaterCount) return;
+
+        this.GrowthValue = growthValue;
+        this.CountValue = countValue;
 
         CountBar.value = CountValue;
 
@@ -143,10 +146,15 @@ public class Vegetable : MonoBehaviour
         growBar.gameObject.SetActive(false);
         CountBar.gameObject.SetActive(false);
 
-        if (growthValue>=0.5f)
+        if (growthValue>=0.5f&& growthValue<1)
         {
             Seed.enabled = false;
             Stem.gameObject.SetActive(true);
+        }
+        if(growthValue>=1)
+        {
+            Seed.enabled = false;
+            Stem.gameObject.SetActive(false);
         }
 
     }

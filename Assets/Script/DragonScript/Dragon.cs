@@ -2,9 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 
-public class Dragon : MonoBehaviour
+public class Dragon : MonoBehaviourPun
 {
+
     // delegate
     public EventReciever dragonEvent = null;
 
@@ -89,35 +92,44 @@ public class Dragon : MonoBehaviour
         //delegate
         dragonEvent = GetComponent<EventReciever>();
 
-        // 체력 초기화
-        curHP = maxHP;
-        // 타겟 오브젝트 위치 랜덤값 받기
-        RandXpos = Random.Range(-2.5f, 3.5f);
-        RandZpos = Random.Range(-2.5f, 3.5f);
-
-        myAnimation = GetComponent<Animator>();
-
-        //player find
-        targetPlayer = FindObjectOfType<PlayerController>();
-
-        // 이펙트 찾아오기
-        markObj = Instantiate(Eff_ExclamationMark, this.transform);
-        hitObj = Instantiate(Eff_Hit, this.transform);///////////////////////////////
-        Eff_ExclamationMark.SetActive(false);
-        Eff_Hit.SetActive(false);
-        Face.SetActive(true);
-        Hit_Face.SetActive(false);
 
         
+            // 체력 초기화
+            curHP = maxHP;
 
+            myAnimation = GetComponent<Animator>();
 
+            //player find
+            targetPlayer = FindObjectOfType<PlayerController>();
+
+            // 이펙트 찾아오기
+            markObj = Instantiate(Eff_ExclamationMark, this.transform);
+            hitObj = Instantiate(Eff_Hit, this.transform);///////////////////////////////
+            Eff_ExclamationMark.SetActive(false);
+            Eff_Hit.SetActive(false);
+            Face.SetActive(true);
+            Hit_Face.SetActive(false);
+        
         // 타겟 오브젝트 첫 위치지정 및 생성(프리팹, 위치, 회전)
-        newObj = Instantiate(targetObjectPrefab, new Vector3(this.transform.position.x + RandXpos, 0f, this.transform.position.z + RandZpos), Quaternion.identity);
+        if (GameManager.INSTANCE.ISGAMEIN)
+        {
+            if (photonView.IsMine) 
+            {
+                newObj = PhotonNetwork.Instantiate(targetObjectPrefab.name, new Vector3(this.transform.position.x + RandXpos, 0f, this.transform.position.z + RandZpos), Quaternion.identity);
+            }
+            
+        }
+        else
+        {
 
-        // 타겟 오브젝트를 배열로 여러개 생성한 뒤
-        // 각 순서에 맞는 자기 공을 찾아가도록 해준다.
-        // 드래곤 생성 시 같은 순서를 찾아가도록 해줘야 하는데?
+            newObj = Instantiate(targetObjectPrefab, new Vector3(this.transform.position.x + RandXpos, 0f, this.transform.position.z + RandZpos), Quaternion.identity);
+
+        }
+
+
+
     }
+
 
 
 
@@ -127,13 +139,17 @@ public class Dragon : MonoBehaviour
 
     private void Start()
     {
+        
         // 드래곤이 생성되면 IDLE 상태를 2초정도 지속 후 MOVE 상태로 이동
         StartCoroutine(IDLE_ST());
+        
     }
 
 
 
-
+    private void Update()
+    {
+    }
 
 
 
@@ -142,20 +158,10 @@ public class Dragon : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-
-        // Weapon 태그와 드래곤이 충돌했을 때 -> 드래곤 피깎기
-        if (other.CompareTag("Weapon"))
-        {
-
-            Debug.Log($"드래곤에게 공격 : - {AttackPower}");
-            DragonTransferDamage(AttackPower);
-        }
         if (other.CompareTag("TargetObject"))
         {
             nextState(STATE.MOVERATE);
         }
-
-        // 공격받고 있을때 공격불가 처리 필요
     }
 
 
@@ -175,18 +181,19 @@ public class Dragon : MonoBehaviour
 
 
 
+    //--------------------------------------------------------------------------------------------------------
+    #region
 
+    // HIT -> 포톤 동기화
+    public void CallDragonTransferDamage(float attackPower)
+    {
+        photonView.RPC("DragonTransferDamage", RpcTarget.All, attackPower);
+    }
 
-
-    // 문제 -> 드래곤이 죽고 나서도 Hit 판정이 생김
-    // 드래곤이 죽으면 모든걸 고정 시켜야 하고
-    // 플레이어의 데미지를 받지 않아야 함
-
-    // HIT
-
+    [PunRPC]
     public void DragonTransferDamage(float attackPower) // 플레이어의 공격이 들어오면 체력 감소
     {
-        
+
         // 이미 죽었으면 리턴
         if (IsDeath) return;
 
@@ -215,7 +222,8 @@ public class Dragon : MonoBehaviour
         }
     }
 
-
+    #endregion
+    //--------------------------------------------------------------------------------------------------------
 
 
 
@@ -386,6 +394,8 @@ public class Dragon : MonoBehaviour
             yield return null;
 
         }
+       
+
     }
 
 
@@ -402,6 +412,7 @@ public class Dragon : MonoBehaviour
 
     IEnumerator FIND_ST()
     {
+
         // 발견 시 나의 위치를 그대로 
         Vector3 myPos = transform.position;
 
@@ -519,7 +530,7 @@ public class Dragon : MonoBehaviour
                 break;
             }
             else if (TargetPlayerToDragon <= AttackRange)
-            {                
+            {
                 nextState(STATE.ATTACK);
                 break;
             }
@@ -554,7 +565,7 @@ public class Dragon : MonoBehaviour
                 transform.rotation = Quaternion.LookRotation(PlayerToMove); // 나중에 부드럽게 움직일 수 있는지 확인 
             }
             // 공격 시 플레이어에게 데미지 전달
-            targetPlayer.SendMessage("PlayerTransferDamage", AttackPower, SendMessageOptions.DontRequireReceiver);
+            targetPlayer.SendMessage("CallPlayerTransferDamage", AttackPower, SendMessageOptions.DontRequireReceiver);
 
             //targetPlayer.GetComponent<Player>().PlayerTransferDamage(AttackPower);
             // 플레이어가 추적 범위 내, 공격범위 밖일 때
@@ -622,6 +633,10 @@ public class Dragon : MonoBehaviour
 
 
 
+
+
+
+
     // Draw Gizmos
 
     private void OnDrawGizmos()
@@ -634,6 +649,7 @@ public class Dragon : MonoBehaviour
         Gizmos.color = new Color32(255, 0, 0, 40);
         Gizmos.DrawSphere(this.transform.position, TrackingRange);
     }
+
 
 
 

@@ -15,7 +15,7 @@ public class DefenseOffenseUIToggle : MonoBehaviour
         }
         else if (GameManager.INSTANCE.INVASIONALLOW)
         {
-            if (this.gameObject.name == "CameraArm" || this.gameObject.name == "OffenseUIManager")
+            if (this.gameObject.name == "CameraArm" || this.gameObject.name == "OffenseUIManager" || this.gameObject.name == "PlayerUI")
             {
                 this.gameObject.SetActive(false);
             }

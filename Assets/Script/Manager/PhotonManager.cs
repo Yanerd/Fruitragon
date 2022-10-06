@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
+using UnityEngine.SceneManagement;
 using Photon.Realtime;
 
 public class PhotonManager : MonoSingleTon<PhotonManager>
@@ -43,6 +44,7 @@ public class PhotonManager : MonoSingleTon<PhotonManager>
     string testName;
 
     Coroutine connectingCoroutine;
+    Coroutine instCoroutine;
 
     private void Awake()
     {
@@ -70,11 +72,18 @@ public class PhotonManager : MonoSingleTon<PhotonManager>
         //this parts detecting clients alived athor room successfully ->this clients be a invader
         if (PhotonNetwork.InRoom && PhotonNetwork.CurrentRoom.PlayerCount == 2 && GameManager.INSTANCE.ISGAMEIN == false)
         {
-            //Offense scene move -> invasion view
-            GameManager.INSTANCE.ISGAMEIN = true;
-            GameManager.INSTANCE.SCENENUM = 2;
+            if (PhotonNetwork.MasterClient.NickName != testName)
+            {
+                //Offense scene move -> invasion view
+                GameManager.INSTANCE.ISGAMEIN = true;
+                GameManager.INSTANCE.SCENENUM = 2;
 
-            PhotonNetwork.LoadLevel("3_OffenceScene");
+                PhotonNetwork.LoadLevel("3_OffenceScene");
+
+                Debug.Log("나는 공격");
+
+                instCoroutine = StartCoroutine(playerInstantiate()); 
+            }
         }
 
         //photon UI check
@@ -374,7 +383,18 @@ public class PhotonManager : MonoSingleTon<PhotonManager>
         {
             GameManager.INSTANCE.ISGAMEIN = true;
             GameManager.INSTANCE.SCENENUM = 2;
+
+
+            SaveLoadManager.INSTANCE.Save();
+
             PhotonNetwork.LoadLevel("3_OffenceScene");
+
+            Debug.Log("나는 방어");
+
+            SaveLoadManager.INSTANCE.Load();
+
+            //PhotonNetwork.Instantiate("Farmer", new Vector3(0f, 1f, 0f), Quaternion.identity);
+           //PhotonNetwork.Instantiate("D_Appleagon", new Vector3(1f, 1f, 1f), Quaternion.identity); // 나중에 세이브로드한 드래곤 사용 필요 / 현재는 test
         }
     }
     public override void OnPlayerLeftRoom(Player otherPlayer)//this events called when New Player out -> go back to defense scene
@@ -384,6 +404,7 @@ public class PhotonManager : MonoSingleTon<PhotonManager>
         //scene changed
         GameManager.INSTANCE.SCENENUM = 1;
         PhotonNetwork.LoadLevel("2_DefenseScene");
+
     }
     #endregion
 
@@ -460,4 +481,18 @@ public class PhotonManager : MonoSingleTon<PhotonManager>
     }
 
     #endregion
+
+    IEnumerator playerInstantiate()
+    {
+       
+        Debug.Log("씬 전환중");
+
+        yield return new WaitUntil(() => SceneManager.GetActiveScene().name == "3_OffenceScene");
+
+        Debug.Log("생성");
+        PhotonNetwork.Instantiate("Farmer", new Vector3(0f, 1f, 0f), Quaternion.identity);
+
+    }
+    
+
 }

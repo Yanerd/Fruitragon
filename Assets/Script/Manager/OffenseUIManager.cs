@@ -11,6 +11,7 @@ public class OffenseUIManager : MonoBehaviour
 {
 
     //camera components
+    GameObject playerCamera = null;
     GameObject cameraArm = null;
     Vector3 initCamDir = Vector3.zero;
 
@@ -58,6 +59,8 @@ public class OffenseUIManager : MonoBehaviour
     // ·©Å©
     TextMeshProUGUI RANK;
 
+    //exception coroutine
+    Coroutine exceptionCoroutine = null;
 
     private void OnEnable()
     {
@@ -68,14 +71,17 @@ public class OffenseUIManager : MonoBehaviour
 
     private void Awake()
     {
-        //camera components
-        cameraArm = GameObject.Find("CameraArm");
-
         //hp ui components
         player = FindObjectOfType<PlayerController>();
-        playerUI = GameObject.Find("PlayerUI").GetComponent<Canvas>();
-        hpSlider = GameObject.Find("HpSlider").GetComponent<Slider>();
-        hpFollowSlider = GameObject.Find("HpFollowSlider").GetComponent<Slider>();
+        if (GameManager.INSTANCE.INVASIONALLOW)
+        {
+            //camera components
+            playerCamera = GameObject.Find("PlayerCamera");
+            cameraArm = GameObject.Find("CameraArm");
+            hpSlider = GameObject.Find("HpSlider").GetComponent<Slider>();
+            hpFollowSlider = GameObject.Find("HpFollowSlider").GetComponent<Slider>();
+            exceptionCoroutine = StartCoroutine(FindPlayerUI());
+        }
 
         //dragon hp ui components
         fruitragons = new List<Dragon>();
@@ -97,6 +103,21 @@ public class OffenseUIManager : MonoBehaviour
         GetCoin                 =GameObject.Find("GetCoins_number").GetComponent<TextMeshProUGUI>();
         RANK                    =GameObject.Find("Rank").GetComponent<TextMeshProUGUI>();
 
+    }
+
+    //exception coroutine
+    IEnumerator FindPlayerUI()
+    {
+        while (playerUI == null)
+        {
+            playerUI = GameObject.Find("PlayerUI").GetComponent<Canvas>();
+            if (playerUI != null)
+            {
+                StopCoroutine(exceptionCoroutine);
+                yield break;
+            }
+            yield return null;
+        }
     }
 
     private void Start()
@@ -152,7 +173,10 @@ public class OffenseUIManager : MonoBehaviour
         }
         else
         {
-            playerUI.transform.LookAt(Camera.main.transform);
+            if (playerUI != null && playerCamera!=null)// execption
+            {
+                playerUI.transform.LookAt(playerCamera.transform);
+            }
         }
     }
     private void CineProductControll()

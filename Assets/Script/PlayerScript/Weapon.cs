@@ -23,7 +23,7 @@ public class Weapon : MonoBehaviour
         {
             Time.timeScale = 0.35f;
             Invoke("TimeBack",0.1f);
-            other.SendMessage("DragonTransferDamage", totalDamage, SendMessageOptions.DontRequireReceiver);
+            other.SendMessage("CallDragonTransferDamage", totalDamage, SendMessageOptions.DontRequireReceiver);
         }
     }
 

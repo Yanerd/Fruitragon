@@ -21868,7 +21868,6 @@ MonoBehaviour:
   xpos: 
   ypos: 
   zpos: 
-  Prefebs: []
 --- !u!4 &1338312896 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 458702, guid: 69d4570f3bec6408aa84d214d2d9aea2, type: 3}
