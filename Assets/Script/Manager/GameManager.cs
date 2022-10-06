@@ -91,11 +91,13 @@ public class GameManager : MonoSingleTon<GameManager>
         {
             GameManager.INSTANCE.GAMETIME += Time.deltaTime;
 
+            //invader is win
             if (GameManager.INSTANCE.GAMETIME > 60000f)//->game time limit
             {
                 CoinRavish();
                 Time.timeScale = 0f;
                 GameManager.INSTANCE.ISTIMEOVER = true;
+
                 yield break;
             }
 

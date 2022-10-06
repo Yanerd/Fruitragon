@@ -34,6 +34,9 @@ public class PhotonManager : MonoSingleTon<PhotonManager>
     [Header("RoomPrefab")]
     [SerializeField] GameObject roomPrefab = null;
     [SerializeField] GameObject emptyRoomPrefab = null;
+
+    //property
+    public bool ISMASTER { get; set; }
     
     //room list
     List<GameObject> roomObjList = new List<GameObject>();
@@ -70,6 +73,8 @@ public class PhotonManager : MonoSingleTon<PhotonManager>
     }
     private void Update()//view real time connect
     {
+        ISMASTER = PhotonNetwork.IsMasterClient;
+
         testName = MetaTrendAPIHandler.INSTANCE.USERNAME;
 
         connectInfo.text = PhotonNetwork.NetworkClientState.ToString();
@@ -87,6 +92,8 @@ public class PhotonManager : MonoSingleTon<PhotonManager>
 
                 Debug.Log("나는 공격");
 
+                // photonView.RPC("SendMyData", );
+
                 instiateCoroutine = StartCoroutine(playerInstantiate()); 
             }
         }
@@ -100,6 +107,10 @@ public class PhotonManager : MonoSingleTon<PhotonManager>
         {
             photonUI.SetActive(false);
         }
+    }
+
+    public void SendMyData()
+    { 
     }
 
     public void OnInputChanged()//input feild name test

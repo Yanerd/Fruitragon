@@ -47,6 +47,24 @@ public class MetaTrendAPIHandler : MonoSingleTon<MetaTrendAPIHandler>
 
     }
 
+    private void Update()
+    {
+        if (PhotonManager.INSTANCE.ISMASTER)
+        {
+            if (GameManager.INSTANCE.ISGAMEIN)
+            {
+                //승자판정
+                if (GameManager.INSTANCE.ISDEAD)
+                {
+                    //master win
+                }
+                else if (GameManager.INSTANCE.ISTIMEOVER)
+                {
+                    //invader/otherclient win
+                }
+            }
+        }
+    }
 
     // 현재 개발단계에 따라서 사용하는 BaseURL이 달라진다.
     string getBaseURL()
