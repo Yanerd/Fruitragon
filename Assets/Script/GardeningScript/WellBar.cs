@@ -33,7 +33,6 @@ public class WellBar : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.W))
         {
-            
            // PhotonFillWater(FillValue);
         }
     }
@@ -74,10 +73,10 @@ public class WellBar : MonoBehaviour
         fillIdex.value = FillValue * 0.25f;
         float pos = 0f;
         pos = FillValue * 0.056f;
-
+        Debug.Log(FillValue);
+        fillIdex.gameObject.SetActive(false);
         water.transform.position = new Vector3(water.transform.position.x, transform.position.y + pos, water.transform.position.z);
-
-        //StartCoroutine(FillWater());
+      
     }
 
     IEnumerator FillWater()

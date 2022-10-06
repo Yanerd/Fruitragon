@@ -49,9 +49,9 @@ public class Vegetable : MonoBehaviour
 
         Vector3 sliderPos= myCamera.WorldToScreenPoint(this.transform.position + new Vector3(0, 0.5f, 0));
         Vector3 CountPos = myCamera.WorldToScreenPoint(this.transform.position + new Vector3(0, 0.4f, 0));
-      
+
         growBar = Instantiate(growthBar, sliderPos, Quaternion.identity, GameObject.Find("DefenseUI").transform);
-        CountBar= Instantiate(waterCountBar, CountPos, Quaternion.identity, GameObject.Find("DefenseUI").transform);
+        CountBar = Instantiate(waterCountBar, CountPos, Quaternion.identity, GameObject.Find("DefenseUI").transform);
         CountBar.transform.GetChild(1).GetChild(0).GetComponent<Image>().color = Color.cyan;
 
         growBar.maxValue = 1;
@@ -120,9 +120,12 @@ public class Vegetable : MonoBehaviour
         }
     }
 
-    public void PhotonInstDefenseVegetable()
+    public void PhotonInstDefenseVegetable(float growthValue, int countValue)
     {
         if (CountBar.value == WaterCount) return;
+
+        this.GrowthValue = growthValue;
+        this.CountValue = countValue;
 
         CountBar.value = CountValue;
 
@@ -143,10 +146,15 @@ public class Vegetable : MonoBehaviour
         growBar.gameObject.SetActive(false);
         CountBar.gameObject.SetActive(false);
 
-        if (growthValue>=0.5f)
+        if (growthValue>=0.5f&& growthValue<1)
         {
             Seed.enabled = false;
             Stem.gameObject.SetActive(true);
+        }
+        if(growthValue>=1)
+        {
+            Seed.enabled = false;
+            Stem.gameObject.SetActive(false);
         }
 
     }

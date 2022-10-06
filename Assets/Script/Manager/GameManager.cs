@@ -44,13 +44,12 @@ public class GameManager : MonoSingleTon<GameManager>
 
     void Start()
     {
+        GameManager.INSTANCE.SCENENUM = 0;
         Initializing();
     }
 
-    private void Initializing() //init function
+    public void Initializing() //init function
     {
-        GameManager.INSTANCE.SCENENUM = 0;
-
         //player state
         GameManager.INSTANCE.ISDEAD = false;
         GameManager.INSTANCE.ISLOCKON = false;
@@ -92,7 +91,7 @@ public class GameManager : MonoSingleTon<GameManager>
         {
             GameManager.INSTANCE.GAMETIME += Time.deltaTime;
 
-            if (GameManager.INSTANCE.GAMETIME > 60f)
+            if (GameManager.INSTANCE.GAMETIME > 60000f)//->game time limit
             {
                 CoinRavish();
                 Time.timeScale = 0f;

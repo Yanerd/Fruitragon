@@ -5,10 +5,13 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
+using UnityEngine.SceneManagement;
 using Photon.Realtime;
 
 public class PhotonManager : MonoSingleTon<PhotonManager>
 {
+    UserInfo userInfo = null;
+
     [Header("TestNameField")]
     [SerializeField] TMP_InputField testNameInput = null;
 
@@ -40,12 +43,14 @@ public class PhotonManager : MonoSingleTon<PhotonManager>
 
     bool onMenu = false;
 
-    string testName;
+    public string testName { get; set; }
 
     Coroutine connectingCoroutine;
+    Coroutine instiateCoroutine;
 
     private void Awake()
     {
+
         DontDestroyOnLoad(this.gameObject);
 
         //Bring Camera Component
@@ -65,16 +70,25 @@ public class PhotonManager : MonoSingleTon<PhotonManager>
     }
     private void Update()//view real time connect
     {
+        testName = MetaTrendAPIHandler.INSTANCE.USERNAME;
+
         connectInfo.text = PhotonNetwork.NetworkClientState.ToString();
 
         //this parts detecting clients alived athor room successfully ->this clients be a invader
         if (PhotonNetwork.InRoom && PhotonNetwork.CurrentRoom.PlayerCount == 2 && GameManager.INSTANCE.ISGAMEIN == false)
         {
-            //Offense scene move -> invasion view
-            GameManager.INSTANCE.ISGAMEIN = true;
-            GameManager.INSTANCE.SCENENUM = 2;
+            if (PhotonNetwork.MasterClient.NickName != testName)
+            {
+                //Offense scene move -> invasion view
+                GameManager.INSTANCE.ISGAMEIN = true;
+                GameManager.INSTANCE.SCENENUM = 2;
 
-            PhotonNetwork.LoadLevel("3_OffenceScene");
+                PhotonNetwork.LoadLevel("3_OffenceScene");
+
+                Debug.Log("나는 공격");
+
+                instiateCoroutine = StartCoroutine(playerInstantiate()); 
+            }
         }
 
         //photon UI check
@@ -374,7 +388,16 @@ public class PhotonManager : MonoSingleTon<PhotonManager>
         {
             GameManager.INSTANCE.ISGAMEIN = true;
             GameManager.INSTANCE.SCENENUM = 2;
+
+
+            SaveLoadManager.INSTANCE.Save();
+
             PhotonNetwork.LoadLevel("3_OffenceScene");
+
+            Debug.Log("나는 방어");
+
+            instiateCoroutine = StartCoroutine(dragonInstantiate());
+
         }
     }
     public override void OnPlayerLeftRoom(Player otherPlayer)//this events called when New Player out -> go back to defense scene
@@ -384,6 +407,10 @@ public class PhotonManager : MonoSingleTon<PhotonManager>
         //scene changed
         GameManager.INSTANCE.SCENENUM = 1;
         PhotonNetwork.LoadLevel("2_DefenseScene");
+
+        GameManager.INSTANCE.Initializing();
+
+        instiateCoroutine = StartCoroutine(GoBackSceneInstantiate());
     }
     #endregion
 
@@ -460,4 +487,35 @@ public class PhotonManager : MonoSingleTon<PhotonManager>
     }
 
     #endregion
+    IEnumerator GoBackSceneInstantiate()
+    {
+
+        Debug.Log("씬 전환중");
+
+        yield return new WaitUntil(() => SceneManager.GetActiveScene().name == "2_DefenseScene");
+
+        Debug.Log("생성");
+        SaveLoadManager.INSTANCE.Load();
+    }
+    IEnumerator playerInstantiate()
+    {
+       
+        Debug.Log("씬 전환중");
+
+        yield return new WaitUntil(() => SceneManager.GetActiveScene().name == "3_OffenceScene");
+
+        Debug.Log("생성");
+        PhotonNetwork.Instantiate("Farmer", new Vector3(0f, 1f, 0f), Quaternion.identity);
+
+    }
+    IEnumerator dragonInstantiate()
+    {
+
+        Debug.Log("씬 전환중");
+
+        yield return new WaitUntil(() => SceneManager.GetActiveScene().name == "3_OffenceScene");
+
+        Debug.Log("생성");
+        SaveLoadManager.INSTANCE.Load();
+    }
 }

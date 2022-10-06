@@ -188,13 +188,13 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
     int housePrice = 500;
     int wellPrice = 500;
 
-    int potatoSeedCount = 0;
-    int appleSeedCount = 0;
-    int cabbageSeedCount = 0;
-    int carrotSeedCount = 0;
-    int eggplantSeedCount = 0;
-    int houseCount = 0;
-    int wellCount = 0;
+    public int potatoSeedCount = 0;
+    public int appleSeedCount = 0;
+    public int cabbageSeedCount = 0;
+    public int carrotSeedCount = 0;
+    public int eggplantSeedCount = 0;
+    public int houseCount = 0;
+    public int wellCount = 0;
     /////////////////////////////////////////////////////
 
     CursorChange myCursor;
@@ -204,6 +204,11 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
    
     private void Awake()
     {
+        if (FindObjectsOfType<DefenseUIManager>().Length >1)
+        {
+            Destroy(this.gameObject);
+        }
+        DontDestroyOnLoad(this.gameObject);
         //test
         //testCount = GameObject.Find("PotatoSeedCount");
         //Debug.Log(testCount.GetComponent<TextMeshProUGUI>().text= "10");
@@ -227,6 +232,13 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
         VegetableMenuOriginPos = VegetableScroll.gameObject.transform.position;
         BuildingMenuOriginPos = BuildingScroll.transform.position;
 
+        potatoSeedCount = SaveLoadManager.INSTANCE.convertpotatoSeedCount;
+        appleSeedCount = SaveLoadManager.INSTANCE.convertappleSeedCount;
+        carrotSeedCount = SaveLoadManager.INSTANCE.convertcarrotSeedCount;
+        eggplantSeedCount = SaveLoadManager.INSTANCE.converteggplantSeedCount;
+        cabbageSeedCount = SaveLoadManager.INSTANCE.convertcabbageSeedCount;
+        houseCount = SaveLoadManager.INSTANCE.convertHouseCount;
+        wellCount = SaveLoadManager.INSTANCE.convertWellCount;
     }
 
     private void Update()

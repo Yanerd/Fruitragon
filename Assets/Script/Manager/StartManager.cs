@@ -9,11 +9,13 @@ public class StartManager : MonoBehaviour
     Button startButton = null;
     ObjectActiveFalse[] ActiveFalsedObj = null;
 
+    Coroutine loadScene = null;
+
     private void Awake()
     {
         startButton = GameObject.Find("StartButton").GetComponent<Button>();
 
-        StartCoroutine(LoadDefenseScene());
+        loadScene = StartCoroutine(LoadDefenseScene());
     }
 
     void Start()
@@ -52,9 +54,13 @@ public class StartManager : MonoBehaviour
 
         while (true)
         {
-            if (operation.isDone)
+            if (operation.isDone && PhotonManager.INSTANCE.testName != null)
             {
+                SaveLoadManager.INSTANCE.Load();
                 startButton.interactable = true;
+
+                StopCoroutine(loadScene);
+                yield break;
             }
 
             yield return null;

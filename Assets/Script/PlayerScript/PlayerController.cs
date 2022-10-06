@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviourPun
 {
 
     #region components
@@ -73,9 +75,14 @@ public class PlayerController : MonoBehaviour
         playerTransform = this.GetComponent<Transform>();
         playerRigidbody = this.GetComponent<Rigidbody>();
         playerAnimator = this.GetComponent<Animator>();
-        camTransfrom = GameObject.Find("CameraArm").GetComponent<Transform>();
-        weaponCollider = GameObject.Find("WeaponCollider");
         playerEvent = this.GetComponent<EventReciever>();
+
+        //client is invader
+        if (photonView.IsMine )
+        {
+            camTransfrom = GameObject.Find("CameraArm").GetComponent<Transform>();
+            weaponCollider = GameObject.Find("WeaponCollider");
+        }
         #endregion
 
         #region deligate chain
@@ -96,8 +103,11 @@ public class PlayerController : MonoBehaviour
             liveDragon.Add(FindObjectsOfType<Dragon>()[i].gameObject);
         }
 
-        //constant value
-        camToPlayerVec = playerTransform.position - camTransfrom.position;
+        //invader client
+        if (photonView.IsMine )
+        {
+            camToPlayerVec = playerTransform.position - camTransfrom.position;
+        }
 
         //visible value
         lookForward = new Vector3(camTransfrom.forward.x, 0f, camTransfrom.forward.z).normalized;
@@ -124,8 +134,13 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         if (GameManager.INSTANCE.ISDEAD || GameManager.INSTANCE.ISTIMEOVER) return;
-        CamTransFormControll();
-        InputControll();
+
+        //client is invader
+        if (photonView.IsMine )
+        {
+            CamTransFormControll();
+            InputControll();
+        }
     }
 
     #region Position Controll
@@ -378,6 +393,13 @@ public class PlayerController : MonoBehaviour
     {
         weaponCollider.SetActive(false);
     }
+
+    public void CallPlayerTransferDamage(float damage)
+    {
+        photonView.RPC("PlayerTransferDamage", RpcTarget.All, damage);
+    }
+
+    [PunRPC]
     public void PlayerTransferDamage(float damage)
     {
         if (isDead) return;

@@ -6,6 +6,7 @@ public class ExitManager : MonoBehaviour
 {
     public void OnButtonExit()
     {
+        SaveLoadManager.INSTANCE.Save();
         Application.Quit();
     }
 }

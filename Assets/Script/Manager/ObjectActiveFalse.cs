@@ -5,12 +5,17 @@ using UnityEngine;
 public class ObjectActiveFalse : MonoBehaviour
 {
     // Start is called before the first frame update
-    void Start()
+
+    private void Update()
     {
         //first set active false for start scene
-        if (GameManager.INSTANCE.ISGAMEIN == false)
+        if (GameManager.INSTANCE.SCENENUM == 0)
         {
             this.gameObject.SetActive(false);
+        }
+        else
+        {
+            this.gameObject.SetActive(true);
         }
         
     }

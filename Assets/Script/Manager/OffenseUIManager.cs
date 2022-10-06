@@ -11,6 +11,7 @@ public class OffenseUIManager : MonoBehaviour
 {
 
     //camera components
+    GameObject playerCamera = null;
     GameObject cameraArm = null;
     Vector3 initCamDir = Vector3.zero;
 
@@ -58,6 +59,8 @@ public class OffenseUIManager : MonoBehaviour
     // ·©Å©
     TextMeshProUGUI RANK;
 
+    //exception coroutine
+    Coroutine exceptionCoroutine = null;
 
     private void OnEnable()
     {
@@ -66,16 +69,35 @@ public class OffenseUIManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
+
+    //exception coroutine
+    IEnumerator FindPlayerUI()
+    {
+        while (playerUI == null)
+        {
+            playerUI = GameObject.Find("PlayerUI").GetComponent<Canvas>();
+            if (playerUI != null)
+            {
+                StopCoroutine(exceptionCoroutine);
+                yield break;
+            }
+            yield return null;
+        }
+    }
+
     private void Awake()
     {
-        //camera components
-        cameraArm = GameObject.Find("CameraArm");
-
         //hp ui components
         player = FindObjectOfType<PlayerController>();
-        playerUI = GameObject.Find("PlayerUI").GetComponent<Canvas>();
-        hpSlider = GameObject.Find("HpSlider").GetComponent<Slider>();
-        hpFollowSlider = GameObject.Find("HpFollowSlider").GetComponent<Slider>();
+        if (GameManager.INSTANCE.INVASIONALLOW)
+        {
+            //camera components
+            playerCamera = GameObject.Find("PlayerCamera");
+            cameraArm = GameObject.Find("CameraArm");
+            hpSlider = GameObject.Find("HpSlider").GetComponent<Slider>();
+            hpFollowSlider = GameObject.Find("HpFollowSlider").GetComponent<Slider>();
+            exceptionCoroutine = StartCoroutine(FindPlayerUI());
+        }
 
         //dragon hp ui components
         fruitragons = new List<Dragon>();
@@ -90,25 +112,25 @@ public class OffenseUIManager : MonoBehaviour
         // Offense End UI Panel Found in Canvas
         offenseEndUI = GameObject.Find("OffenseEndUI");
 
-        DragonKilledCount       =GameObject.Find("DragonsKilled_number").GetComponent<TextMeshProUGUI>();
-        PlantKilledCount        =GameObject.Find("PlantKilled_number").GetComponent<TextMeshProUGUI>();
-        BuildingDestroyCount    =GameObject.Find("DestroyBuilding_number").GetComponent<TextMeshProUGUI>();
-        TotalScore              =GameObject.Find("TotalScore_number").GetComponent<TextMeshProUGUI>();
-        GetCoin                 =GameObject.Find("GetCoins_number").GetComponent<TextMeshProUGUI>();
-        RANK                    =GameObject.Find("Rank").GetComponent<TextMeshProUGUI>();
-
+        DragonKilledCount = GameObject.Find("DragonsKilled_number").GetComponent<TextMeshProUGUI>();
+        PlantKilledCount = GameObject.Find("PlantKilled_number").GetComponent<TextMeshProUGUI>();
+        BuildingDestroyCount = GameObject.Find("DestroyBuilding_number").GetComponent<TextMeshProUGUI>();
+        TotalScore = GameObject.Find("TotalScore_number").GetComponent<TextMeshProUGUI>();
+        GetCoin = GameObject.Find("GetCoins_number").GetComponent<TextMeshProUGUI>();
+        RANK = GameObject.Find("Rank").GetComponent<TextMeshProUGUI>();
     }
 
     private void Start()
     {
-
         // Offense End UI
         offenseEndUI.SetActive(false);
 
         // 
+        if(cameraArm != null)
         initCamDir = cameraArm.transform.forward;
 
         //player hp delegate
+        if(player != null)
         player.playerEvent.callBackPlayerHPChangeEvent += OnChangedHp;
 
         //dragon hp delegate
@@ -152,7 +174,10 @@ public class OffenseUIManager : MonoBehaviour
         }
         else
         {
-            playerUI.transform.LookAt(Camera.main.transform);
+            if (playerUI != null && playerCamera!=null)// execption
+            {
+                playerUI.transform.LookAt(playerCamera.transform);
+            }
         }
     }
     private void CineProductControll()

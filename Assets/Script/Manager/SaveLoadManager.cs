@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Photon.Pun;
+using Photon.Realtime;
 
 [System.Serializable]
 public class Data
@@ -22,7 +24,15 @@ public class Data
     public List<string> water = new List<string>();
     public List<string> plantBar = new List<string>();
     public List<string> wellBar = new List<string>();
-    
+    public string potatoSeedCount;
+    public string appleSeedCount;
+    public string cabbageSeedCount;
+    public string carrotSeedCount;
+    public string eggplantSeedCount;
+    public string houseCount;
+    public string wellCount;
+
+
 
     public string groundState;
 }
@@ -44,50 +54,48 @@ public class SaveLoadManager : MonoSingleTon<SaveLoadManager>
     int convertGroundState;
     float convertWellBar;
 
+    public int convertpotatoSeedCount { get; set; }
+    public int convertappleSeedCount { get; set; }
+    public int convertcabbageSeedCount { get; set; }
+    public int convertcarrotSeedCount { get; set; }
+    public int converteggplantSeedCount { get; set; }
+    public int convertHouseCount { get; set; }
+    public int convertWellCount { get; set; }
 
     Transform[] fence = new Transform[5];
     Transform[] tree = new Transform[4];
 
     private GameObject PoolingZone;
 
-    private void Awake()
+    private void Start()
     {
         PoolingZone = GameObject.Find("PoolingZone");
         DontDestroyOnLoad(this.gameObject);
     }
 
-    private void Update()
-    {
-
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            Save();
-        }
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            Load();
-        }
-    }
-
     public void Save()
     {
         
-
         if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/Dragon Seed/" + "/Saves/") == false) // There's no directory
         {
             Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/Dragon Seed/" + "/Saves/");
         }
         Debug.Log("저장시작" + Time.time);
 
+        objectCount = PoolingZone.transform.childCount;
         Data data = new Data();
+
+        data.groundState = DefenseUIManager.INSTANCE.MapState.ToString();
+        data.potatoSeedCount = DefenseUIManager.INSTANCE.potatoSeedCount.ToString();
+        data.appleSeedCount = DefenseUIManager.INSTANCE.appleSeedCount.ToString();
+        data.cabbageSeedCount = DefenseUIManager.INSTANCE.cabbageSeedCount.ToString();
+        data.carrotSeedCount = DefenseUIManager.INSTANCE.carrotSeedCount.ToString();
+        data.eggplantSeedCount = DefenseUIManager.INSTANCE.eggplantSeedCount.ToString();
+        data.houseCount = DefenseUIManager.INSTANCE.houseCount.ToString();
+        data.wellCount = DefenseUIManager.INSTANCE.wellCount.ToString();
+
         for (int i = 0; i < PoolingZone.transform.childCount; i++)
         {
-
-            objectCount = PoolingZone.transform.childCount;
-
-
-          
-
             str = PoolingZone.transform.GetChild(i).name;
             xpos = PoolingZone.transform.GetChild(i).position.x.ToString();
             ypos = PoolingZone.transform.GetChild(i).position.y.ToString();
@@ -98,7 +106,7 @@ public class SaveLoadManager : MonoSingleTon<SaveLoadManager>
             data.yPos.Add(ypos);
             data.zPos.Add(zpos);
             data.saveListCount = objectCount.ToString();
-            data.groundState = DefenseUIManager.INSTANCE.MapState.ToString();
+            
             
             if (words[0] == "Well")
             {
@@ -129,18 +137,11 @@ public class SaveLoadManager : MonoSingleTon<SaveLoadManager>
                 data.plantBar.Add(PoolingZone.transform.GetChild(i).GetComponent<Vegetable>().GrowthValue.ToString());
                 data.water.Add(PoolingZone.transform.GetChild(i).GetComponent<Vegetable>().CountValue.ToString());
             }
-            //plantBarCount = data.plantBar.Count;
             data.waterListCount = data.water.Count.ToString();
-            //wellBarCount = data.wellBar.Count;
-
-
-
-
         }
 
         
         Debug.Log("저장완료" + Time.time);
-
 
 
         File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/Dragon Seed/" + "/Saves/" + "/Save01.json", Encryption.Encrypt((JsonUtility.ToJson(data)),"key"));
@@ -152,73 +153,129 @@ public class SaveLoadManager : MonoSingleTon<SaveLoadManager>
         float convertX;
         float convertY;
         float convertZ;
-        
 
         string parse = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/Dragon Seed/" + "/Saves/" + "/Save01.json");
         File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/Dragon Seed/" + "/Saves/" + "/Read.json", Encryption.Decrypt(parse, "key"));
 
         Debug.Log("로드시작");
         Data data2 = JsonUtility.FromJson<Data>(File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/Dragon Seed/" + "/Saves/" + "/Read.json"));
-        
-        
-        count = int.Parse(data2.saveListCount);
-        waterCount = int.Parse(data2.waterListCount);
-        int j = 0;
-        for (int i = 0; i < count; i++)
+
+        int waterListCount = 0;
+        int wellBarListCount = 0;
+        convertpotatoSeedCount = int.Parse(data2.potatoSeedCount);
+        convertappleSeedCount = int.Parse(data2.appleSeedCount);
+        convertcabbageSeedCount = int.Parse(data2.cabbageSeedCount);
+        convertcarrotSeedCount = int.Parse(data2.carrotSeedCount);
+        converteggplantSeedCount = int.Parse(data2.eggplantSeedCount);
+        convertHouseCount = int.Parse(data2.houseCount);
+        convertWellCount = int.Parse(data2.wellCount);
+
+        bool parseCount = int.TryParse(data2.saveListCount, out count);
+        convertGroundState = int.Parse(data2.groundState);
+
+        if (parseCount == true)
         {
-            convertX = float.Parse(data2.xPos[i]);
-            convertY = float.Parse(data2.yPos[i]);
-            convertZ = float.Parse(data2.zPos[i]);
-            
-            convertGroundState = int.Parse(data2.groundState);
-
-            Vector3 vector3 = new Vector3(convertX, convertY, convertZ);
-
-            if(data2.name[i]== "V_Potato"|| data2.name[i] == "V_Apple" || data2.name[i] == "V_Cabbage" || 
-                data2.name[i] == "V_Carrot" || data2.name[i] == "V_Eggplant")
+            for (int i = 0; i < count; i++)
             {
-                
-                Debug.Log(waterCount+"Save");
-              
-                
-                convertWaterCount = int.Parse(data2.water[j]);
-                convertPlantBar = float.Parse(data2.plantBar[j]);
+                convertX = float.Parse(data2.xPos[i]);
+                convertY = float.Parse(data2.yPos[i]);
+                convertZ = float.Parse(data2.zPos[i]);
 
-                VegetableInit(data2.name[i], vector3, convertPlantBar, convertWaterCount);
-                j++;
-                //j = 0;
-            }
-            else
-            {
+                Vector3 vector3 = new Vector3(convertX, convertY, convertZ);
+
                 Init(data2.name[i], vector3);
+                //}
             }
-            
+
+        }
+        else
+        {
+            GroundInit();
         }
 
-        GroundInit();
-
-        //File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/Dragon Seed/" + "/Saves/" + "/Read.json");
+        SeedCount(convertpotatoSeedCount, convertappleSeedCount, convertcabbageSeedCount, convertcarrotSeedCount, converteggplantSeedCount);
     }
-    public GameObject[] Prefebs;
+    public void SeedCount(int potato, int apple, int cabbage, int carrot, int eggplant)
+    {
+        DefenseUIManager.INSTANCE.potatoSeedCount = potato;
+        DefenseUIManager.INSTANCE.appleSeedCount = apple;
+        DefenseUIManager.INSTANCE.cabbageSeedCount = cabbage;
+        DefenseUIManager.INSTANCE.carrotSeedCount = carrot;
+        DefenseUIManager.INSTANCE.eggplantSeedCount = eggplant;
+    }
+
+    [PunRPC]
     public void Init(string name, Vector3 pos)
     {
         GameObject obj = Resources.Load<GameObject>($"Prefebs/{name}");
-        GameObject instObject = Instantiate(obj, pos, Quaternion.identity, PoolingZone.transform);
-
-        
-
+        GameObject instObject = null;
+        if (GameManager.INSTANCE.ISGAMEIN == true)
+        {
+            Debug.Log("포톤 인스턴시" + name);
+            //포톤 인스턴시 에이트 적용 
+            instObject = PhotonNetwork.Instantiate(name, pos, Quaternion.identity);
+        }
+        else
+        {
+            Debug.Log("로컬 인스턴시");
+            PoolingZone = GameObject.Find("PoolingZone");
+            Debug.Log(name);
+            instObject = Instantiate(obj, pos, Quaternion.identity, PoolingZone.transform);
+            Debug.Log(instObject.name);
+        }
     }
+    [PunRPC]
     public void VegetableInit(string name, Vector3 pos,float growthValue,int countValue)
     {
-        GameObject obj = Resources.Load<GameObject>($"Prefebs/{name}");
-        GameObject instObject = Instantiate(obj, pos, Quaternion.identity, PoolingZone.transform);
+        GameObject obj;
+        GameObject instObject;
 
-        //instObject.GetComponent<Vegetable>().GrowthValue = growthValue;
-        //instObject.GetComponent<Vegetable>().CountValue = countValue;
-        instObject.GetComponent<Vegetable>().PhotonInstOffenseVegetable(growthValue, countValue);
+        obj = Resources.Load<GameObject>($"Prefebs/{name}");
 
+        if (GameManager.INSTANCE.ISGAMEIN==true)
+        {
+            Debug.Log("포톤 인스턴시" + name);
+            //포톤 인스턴시 에이트 적용 
+            instObject = PhotonNetwork.Instantiate(name, pos, Quaternion.identity);
+            instObject.GetComponent<Vegetable>().PhotonInstOffenseVegetable(growthValue, countValue);
+            
+        }
+        else
+        {
+            Debug.Log("로컬 인스턴시");
+            instObject = Instantiate(obj, pos, Quaternion.identity, PoolingZone.transform);
+            instObject.GetComponent<Vegetable>().PhotonInstDefenseVegetable(growthValue, countValue);
+        }
 
+        
     }
+    [PunRPC]
+    public void WellInit(string name, Vector3 pos, float fillValue)
+    {
+        GameObject obj;
+        GameObject instObject;
+
+        obj = Resources.Load<GameObject>($"Prefebs/{name}");
+
+        if (GameManager.INSTANCE.ISGAMEIN == true)
+        {
+            Debug.Log("포톤 인스턴시" + name);
+            //포톤 인스턴시 에이트 적용 
+            instObject = PhotonNetwork.Instantiate(name, pos, Quaternion.identity);
+            instObject.GetComponent<WellBar>().PhotonOffenseFillWater(fillValue);
+        }
+        else
+        {
+            Debug.Log("로컬 인스턴시");
+            instObject = Instantiate(obj, pos, Quaternion.identity, PoolingZone.transform);
+            instObject.GetComponent<WellBar>().PhotonDefenseFillWater(fillValue);
+        }
+
+
+
+        
+    }
+    [PunRPC]
     public void GroundInit()
     {
         for (int i = 0; i < GameObject.Find("fence").transform.childCount; i++)
@@ -233,7 +290,7 @@ public class SaveLoadManager : MonoSingleTon<SaveLoadManager>
 
         PhotonInstGround(fence, tree, convertGroundState);
     }
-
+    [PunRPC]
     public void PhotonInstGround(Transform[] fence, Transform[] tree, int mapState)
     {
         if (mapState == 4)
