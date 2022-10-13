@@ -50,14 +50,18 @@ public class StartManager : MonoBehaviour
     }
     IEnumerator LoadDefenseScene()
     {
-        AsyncOperation operation = SceneManager.LoadSceneAsync("2_DefenseScene", LoadSceneMode.Additive);
+        AsyncOperation operation = SceneManager.LoadSceneAsync("2_GardenningScene", LoadSceneMode.Additive);
 
         while (true)
         {
+
+
             if (operation.isDone && PhotonManager.INSTANCE.testName != null)
             {
                 SaveLoadManager.INSTANCE.Load();
                 startButton.interactable = true;
+                PhotonManager.INSTANCE.OnIPButton();
+                PhotonManager.INSTANCE.OnSRButton();
 
                 StopCoroutine(loadScene);
                 yield break;

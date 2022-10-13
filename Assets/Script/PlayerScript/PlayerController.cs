@@ -71,72 +71,99 @@ public class PlayerController : MonoBehaviourPun
 
     private void Awake()
     {
-        #region ref components
-        playerTransform = this.GetComponent<Transform>();
-        playerRigidbody = this.GetComponent<Rigidbody>();
-        playerAnimator = this.GetComponent<Animator>();
-        playerEvent = this.GetComponent<EventReciever>();
-
-        //client is invader
-        if (photonView.IsMine )
+        if (photonView.IsMine)
         {
-            camTransfrom = GameObject.Find("CameraArm").GetComponent<Transform>();
-            weaponCollider = GameObject.Find("WeaponCollider");
-        }
-        #endregion
+            #region ref components
+            playerTransform = this.GetComponent<Transform>();
+            playerRigidbody = this.GetComponent<Rigidbody>();
+            playerAnimator = this.GetComponent<Animator>();
+            playerEvent = this.GetComponent<EventReciever>();
 
-        #region deligate chain
-        playerEvent.callBackAttackStartEvent += OnAttackStart;
-        playerEvent.callBackAttackEndEvent += OnAttackEnd;
-        playerEvent.callBackEnableTransferDamageEvent += OnWeaponCollider;
-        playerEvent.callBackDisableTransferDamageEvent += OffWeaponCollider;
-        #endregion
+
+            #endregion
+
+            #region deligate chain
+            playerEvent.callBackAttackStartEvent += OnAttackStart;
+            playerEvent.callBackAttackEndEvent += OnAttackEnd;
+            playerEvent.callBackEnableTransferDamageEvent += OnWeaponCollider;
+            playerEvent.callBackDisableTransferDamageEvent += OffWeaponCollider;
+            #endregion
+        }
     }
 
     private void Start()
     {
         #region initializing
-
-        //live dragon list init
-        for (int i = 0; i < FindObjectsOfType<Dragon>().Length; i++)
-        {
-            liveDragon.Add(FindObjectsOfType<Dragon>()[i].gameObject);
-        }
-
         //invader client
-        if (photonView.IsMine )
+        if (photonView.IsMine)
         {
+            StartCoroutine(FindCamera());
+
+            //live dragon list init
+            for (int i = 0; i < FindObjectsOfType<Dragon>().Length; i++)
+            {
+                liveDragon.Add(FindObjectsOfType<Dragon>()[i].gameObject);
+            }
+
+
             camToPlayerVec = playerTransform.position - camTransfrom.position;
+
+            //visible value
+            lookForward = new Vector3(camTransfrom.forward.x, 0f, camTransfrom.forward.z).normalized;
+            lookRight = new Vector3(camTransfrom.right.x, 0f, camTransfrom.right.z).normalized;
+            moveDir = lookForward * axisZ + lookRight * axisX;
+
+            //move position value
+            newPosition = this.transform.position;
+
+            //player state
+            playerCurHp = playerMaxHp;
+
+            //state value
+            curState = STATE.NONE;
+
+            //weapon collider init
+            weaponCollider.SetActive(false);
+
+            //start state
+            ChangeState(STATE.IDLE);
+            #endregion
         }
-
-        //visible value
-        lookForward = new Vector3(camTransfrom.forward.x, 0f, camTransfrom.forward.z).normalized;
-        lookRight = new Vector3(camTransfrom.right.x, 0f, camTransfrom.right.z).normalized;
-        moveDir = lookForward * axisZ + lookRight * axisX;
-
-        //move position value
-        newPosition = this.transform.position;
-
-        //player state
-        playerCurHp = playerMaxHp;
-
-        //state value
-        curState = STATE.NONE;
-
-        //weapon collider init
-        weaponCollider.SetActive(false);
-
-        //start state
-        ChangeState(STATE.IDLE);
-        #endregion
     }
+
+    IEnumerator FindCamera()
+    {
+        while (true)
+        {
+            if (photonView.IsMine)
+            {
+                Debug.Log("카메라 찾는 중");
+                if (camTransfrom==null)
+                {
+                    camTransfrom = GameObject.Find("CameraArm(Clone)").GetComponent<Transform>();
+                    weaponCollider = GameObject.Find("WeaponCollider");
+                    if (camTransfrom != null)
+                    {
+                        Debug.Log("카메라 찾음");
+                        yield break;
+                    }
+                }
+            }
+            yield return null;
+        }
+        
+    }
+
+
+
+
+
 
     private void Update()
     {
         if (GameManager.INSTANCE.ISDEAD || GameManager.INSTANCE.ISTIMEOVER) return;
 
-        //client is invader
-        if (photonView.IsMine )
+        if (photonView.IsMine)
         {
             CamTransFormControll();
             InputControll();
@@ -173,6 +200,7 @@ public class PlayerController : MonoBehaviourPun
         //LockOn Input
         if (!GameManager.INSTANCE.ISLOCKON && Input.GetKeyDown(KeyCode.F))
         {
+            Debug.Log("f눌림");
             GameManager.INSTANCE.ISLOCKON = true;
             StartCoroutine(LockOn());
         }
@@ -184,8 +212,10 @@ public class PlayerController : MonoBehaviourPun
 
     private void CamTransFormControll()//camera transform controll
     {
-        camTransfrom.position = playerTransform.position - camToPlayerVec;
+        if (camTransfrom == null) StartCoroutine(FindCamera());
 
+        //camTransfrom.position = playerTransform.position - camToPlayerVec;
+        camTransfrom.position = this.transform.position + new Vector3(0, 0.1f, 0);
         camTransfrom.rotation = Quaternion.Euler(-mouseY, mouseX, 0);
 
     }
@@ -194,12 +224,17 @@ public class PlayerController : MonoBehaviourPun
     #region LockOn Loop
     IEnumerator LockOn()//lockon coroutine
     {
+        Debug.Log("lock");
         VisibleCheck();
         Vector3 viewDir = (Camera.main.transform.forward).normalized;
 
         while (GameManager.INSTANCE.ISLOCKON)/////////////////////////////////////////////////////////////////////////////////////target missing exception
         {
-            if(targetObject == null) GameManager.INSTANCE.ISLOCKON = false;
+            if (targetObject == null)
+            {
+                GameManager.INSTANCE.ISLOCKON = false;
+                yield break;
+            }
 
             Vector3 targetDir = (targetObject.transform.position - playerTransform.position).normalized;
             viewDir = Vector3.Lerp(viewDir, targetDir, 0.08f);
@@ -396,6 +431,7 @@ public class PlayerController : MonoBehaviourPun
 
     public void CallPlayerTransferDamage(float damage)
     {
+        Debug.Log("데미지 받음");
         photonView.RPC("PlayerTransferDamage", RpcTarget.All, damage);
     }
 
@@ -409,6 +445,7 @@ public class PlayerController : MonoBehaviourPun
 
         if (playerCurHp <= 0f)
         {
+            Debug.Log("플레이어 죽음");
             playerCurHp = 0f;
             isDead = true;
             ChangeState(STATE.DIE);

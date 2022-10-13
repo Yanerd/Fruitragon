@@ -131,7 +131,6 @@ public class MetaTrendAPIHandler : MonoSingleTon<MetaTrendAPIHandler>
         {
             if (response != null)
             {
-                Debug.Log("## Settings : " + response.ToString());
                 resSettigns = response;
                 BETTINGID = resSettigns.data.settings._id;
             }
@@ -290,7 +289,6 @@ public class MetaTrendAPIHandler : MonoSingleTon<MetaTrendAPIHandler>
         UnityWebRequest www = UnityWebRequest.Get("http://localhost:8546/api/getuserprofile");
         yield return www.SendWebRequest();
 
-        Debug.Log("이거 제이슨 포맷 " + www.downloadHandler.text); //json format
 
         Res_GetUserProfile res_getUserProfile = JsonUtility.FromJson<Res_GetUserProfile>(www.downloadHandler.text);
         callback(res_getUserProfile);
@@ -313,7 +311,6 @@ public class MetaTrendAPIHandler : MonoSingleTon<MetaTrendAPIHandler>
         // get session id
         UnityWebRequest www = UnityWebRequest.Get("http://localhost:8546/api/getsessionid");
         yield return www.SendWebRequest();
-        Debug.Log(www.downloadHandler.text);
         Res_GetSessionID res_getSessionID = JsonUtility.FromJson<Res_GetSessionID>(www.downloadHandler.text);
         callback(res_getSessionID);
     }
@@ -393,10 +390,8 @@ public class MetaTrendAPIHandler : MonoSingleTon<MetaTrendAPIHandler>
 
 
         UnityWebRequest www = UnityWebRequest.Get(url);
-        Debug.Log(API_KEY);
         www.SetRequestHeader("api-key", API_KEY);
         yield return www.SendWebRequest();
-        Debug.Log(www.downloadHandler.text);
         Res_Settings res = JsonUtility.FromJson<Res_Settings>(www.downloadHandler.text);
         callback(res);
         //UnityWebRequest www = new UnityWebRequest(URL);

@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
 {
+    Canvas defenseUI;
+
     [Header("Be A KING")]
     [SerializeField] bool masterMode = false;
     public bool invadePermit;
@@ -164,7 +166,7 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
 
     #region Dragon List
 
-    public List<GameObject> potatoDragonList = new List<GameObject>();
+   public List<GameObject> potatoDragonList = new List<GameObject>();
    public List<GameObject> appleDragonList = new List<GameObject>();
    public List<GameObject> cabbageDragonList = new List<GameObject>();
    public List<GameObject> carrotDragonList = new List<GameObject>();
@@ -204,6 +206,8 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
    
     private void Awake()
     {
+        defenseUI = GameObject.Find("DefenseUI").GetComponent<Canvas>();
+
         if (FindObjectsOfType<DefenseUIManager>().Length >1)
         {
             Destroy(this.gameObject);
@@ -232,17 +236,24 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
         VegetableMenuOriginPos = VegetableScroll.gameObject.transform.position;
         BuildingMenuOriginPos = BuildingScroll.transform.position;
 
-        potatoSeedCount = SaveLoadManager.INSTANCE.convertpotatoSeedCount;
-        appleSeedCount = SaveLoadManager.INSTANCE.convertappleSeedCount;
-        carrotSeedCount = SaveLoadManager.INSTANCE.convertcarrotSeedCount;
-        eggplantSeedCount = SaveLoadManager.INSTANCE.converteggplantSeedCount;
-        cabbageSeedCount = SaveLoadManager.INSTANCE.convertcabbageSeedCount;
-        houseCount = SaveLoadManager.INSTANCE.convertHouseCount;
-        wellCount = SaveLoadManager.INSTANCE.convertWellCount;
+    }
+
+    private void Start()
+    {
+        defenseUI.targetDisplay = 1;   
     }
 
     private void Update()
     {
+        if (GameManager.INSTANCE.SCENENUM == 1)
+        {
+            defenseUI.targetDisplay = 0;
+        }
+        else if (GameManager.INSTANCE.SCENENUM == 2)
+        {
+            defenseUI.targetDisplay = 1;
+        }
+
         if (masterMode)
         {
             potatoSeedCount = 10;

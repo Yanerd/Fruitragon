@@ -15,8 +15,21 @@ public class ObjectActiveFalse : MonoBehaviour
         }
         else
         {
-            this.gameObject.SetActive(true);
+            if (this.gameObject.name == "DefenseUIManager")
+            {
+                if (GameManager.INSTANCE.SCENENUM == 1)
+                {
+                    this.gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.gameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                this.gameObject.SetActive(true);
+            }
         }
-        
     }
 }

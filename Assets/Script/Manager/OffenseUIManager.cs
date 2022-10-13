@@ -11,9 +11,6 @@ public class OffenseUIManager : MonoBehaviour
 {
 
     //camera components
-    GameObject playerCamera = null;
-    GameObject cameraArm = null;
-    Vector3 initCamDir = Vector3.zero;
 
     //Hp UI components
     PlayerController player = null;
@@ -73,29 +70,30 @@ public class OffenseUIManager : MonoBehaviour
     //exception coroutine
     IEnumerator FindPlayerUI()
     {
-        while (playerUI == null)
+        while(playerUI == null)
         {
             playerUI = GameObject.Find("PlayerUI").GetComponent<Canvas>();
+            hpSlider = GameObject.Find("HpSlider").GetComponent<Slider>();
+            hpFollowSlider = GameObject.Find("HpFollowSlider").GetComponent<Slider>();
             if (playerUI != null)
             {
-                StopCoroutine(exceptionCoroutine);
+               StopCoroutine(exceptionCoroutine);
                 yield break;
             }
             yield return null;
         }
+
     }
 
     private void Awake()
     {
         //hp ui components
         player = FindObjectOfType<PlayerController>();
-        if (GameManager.INSTANCE.INVASIONALLOW)
+
+        Debug.Log(GameManager.INSTANCE.WANTINVASION);
+
+        if (GameManager.INSTANCE.WANTINVASION)
         {
-            //camera components
-            playerCamera = GameObject.Find("PlayerCamera");
-            cameraArm = GameObject.Find("CameraArm");
-            hpSlider = GameObject.Find("HpSlider").GetComponent<Slider>();
-            hpFollowSlider = GameObject.Find("HpFollowSlider").GetComponent<Slider>();
             exceptionCoroutine = StartCoroutine(FindPlayerUI());
         }
 
@@ -122,13 +120,10 @@ public class OffenseUIManager : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log(GameManager.INSTANCE.WANTINVASION);
         // Offense End UI
         offenseEndUI.SetActive(false);
-
-        // 
-        if(cameraArm != null)
-        initCamDir = cameraArm.transform.forward;
-
+       
         //player hp delegate
         if(player != null)
         player.playerEvent.callBackPlayerHPChangeEvent += OnChangedHp;
@@ -154,7 +149,6 @@ public class OffenseUIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        PlayerUIControll();
         CineProductControll();
         GameEndControll();
     }
@@ -165,21 +159,8 @@ public class OffenseUIManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
     }
 
-    private void PlayerUIControll()
-    {
-        if (GameManager.INSTANCE.ISLOCKON)
-        {
-            playerUI.transform.localRotation = Quaternion.LookRotation(initCamDir);
-            //ui방향 고정 시키도록 하기
-        }
-        else
-        {
-            if (playerUI != null && playerCamera!=null)// execption
-            {
-                playerUI.transform.LookAt(playerCamera.transform);
-            }
-        }
-    }
+   
+
     private void CineProductControll()
     {
         if (GameManager.INSTANCE.ISDEAD || GameManager.INSTANCE.ISTIMEOVER)
@@ -326,8 +307,9 @@ public class OffenseUIManager : MonoBehaviour
     // 버튼 누를때는 마우스 커서 활성화 필요
     public void OnBackButton()
     {
-        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync("DefenseScene");
-        asyncOperation.allowSceneActivation = true;
+        Time.timeScale = 1f;
+        Photon.Pun.PhotonNetwork.LoadLevel("2_DefenseScene");
+        Photon.Pun.PhotonNetwork.Disconnect();
     }
 }
 

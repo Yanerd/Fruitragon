@@ -10,6 +10,8 @@ using Photon.Realtime;
 
 public class PhotonManager : MonoSingleTon<PhotonManager>
 {
+    public bool INABLE { get; set; }
+
     UserInfo userInfo = null;
 
     [Header("TestNameField")]
@@ -27,13 +29,22 @@ public class PhotonManager : MonoSingleTon<PhotonManager>
     [SerializeField] TextMeshProUGUI connectInfo = null;
 
     [Header("RoomListPage")]
-    [SerializeField] Button refreshButton = null;
     [SerializeField] GameObject searchRoomPage = null;
     [SerializeField] GameObject roomListSpot = null;
 
     [Header("RoomPrefab")]
     [SerializeField] GameObject roomPrefab = null;
     [SerializeField] GameObject emptyRoomPrefab = null;
+
+    public void OnIPButton()
+    {
+        invasionPermitButton.interactable = true;
+    }
+
+    public void OnSRButton()
+    {
+        searchRoomButton.interactable = true;
+    }
 
     //property
     public bool ISMASTER { get; set; }
@@ -53,6 +64,7 @@ public class PhotonManager : MonoSingleTon<PhotonManager>
 
     private void Awake()
     {
+        INABLE = false;
 
         DontDestroyOnLoad(this.gameObject);
 
@@ -76,6 +88,15 @@ public class PhotonManager : MonoSingleTon<PhotonManager>
         ISMASTER = PhotonNetwork.IsMasterClient;
 
         testName = MetaTrendAPIHandler.INSTANCE.USERNAME;
+        if (testName == null)
+        {
+            INABLE = false;
+        }
+        else
+        {
+            INABLE = true;
+        }
+
 
         connectInfo.text = PhotonNetwork.NetworkClientState.ToString();
 
@@ -417,7 +438,7 @@ public class PhotonManager : MonoSingleTon<PhotonManager>
 
         //scene changed
         GameManager.INSTANCE.SCENENUM = 1;
-        PhotonNetwork.LoadLevel("2_DefenseScene");
+        PhotonNetwork.LoadLevel("2_GardenningScene");
 
         GameManager.INSTANCE.Initializing();
 
@@ -503,30 +524,87 @@ public class PhotonManager : MonoSingleTon<PhotonManager>
 
         Debug.Log("씬 전환중");
 
-        yield return new WaitUntil(() => SceneManager.GetActiveScene().name == "2_DefenseScene");
+        yield return new WaitUntil(() => SceneManager.GetActiveScene().name == "2_GardenningScene");
 
         Debug.Log("생성");
         SaveLoadManager.INSTANCE.Load();
     }
     IEnumerator playerInstantiate()
     {
-       
         Debug.Log("씬 전환중");
 
-        yield return new WaitUntil(() => SceneManager.GetActiveScene().name == "3_OffenceScene");
+        yield return new WaitUntil(() => (SceneManager.GetActiveScene().name == "3_OffenceScene"));
+        
+        yield return StartCoroutine(CreateCam("CameraArm"));
 
-        Debug.Log("생성");
+        yield return StartCoroutine(CreateOffenseUI());
+        Debug.Log("플레이어 생성");
         PhotonNetwork.Instantiate("Farmer", new Vector3(0f, 1f, 0f), Quaternion.identity);
-
     }
+
     IEnumerator dragonInstantiate()
     {
-
         Debug.Log("씬 전환중");
+        
+        yield return new WaitUntil(() => (SceneManager.GetActiveScene().name == "3_OffenceScene"));
 
-        yield return new WaitUntil(() => SceneManager.GetActiveScene().name == "3_OffenceScene");
 
-        Debug.Log("생성");
+        yield return StartCoroutine(CreateCam("DEFMainCamera"));
+
+        yield return StartCoroutine(CreateDefenseUI());
+
+        Debug.Log("드래곤 생성");
         SaveLoadManager.INSTANCE.Load();
     }
+
+    IEnumerator CreateCam(string camName)
+    {
+        Debug.Log("카메라 생성");
+
+        GameObject CameraArm;
+        
+        CameraArm = Resources.Load<GameObject>(camName);
+        Instantiate(CameraArm, CameraArm.transform.position, Quaternion.identity);
+
+        Debug.Log("캠 생성 완료");
+        yield break;
+    }
+    IEnumerator CreateOffenseUI()
+    {
+        Debug.Log("오팬스 ui 생성");
+
+        GameObject OffenseUIManager;
+        GameObject instOffenseUIManager;
+
+        OffenseUIManager = Resources.Load<GameObject>("OffenseUIManager");
+        instOffenseUIManager = Instantiate(OffenseUIManager, OffenseUIManager.transform.position, Quaternion.identity);
+
+        Debug.Log("UI 생성 완료");
+        yield break;
+    }
+    IEnumerator CreateDefenseUI()
+    {
+        Debug.Log("디팬스 ui 생성");
+
+        GameObject DefenseBattleUIManager;
+        GameObject instDefenseBattleUIManager;
+
+        DefenseBattleUIManager = Resources.Load<GameObject>("DefenseBattleUIManager");
+        instDefenseBattleUIManager = Instantiate(DefenseBattleUIManager, DefenseBattleUIManager.transform.position, Quaternion.identity);
+
+        yield break;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

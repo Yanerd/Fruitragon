@@ -43,48 +43,33 @@ public class Vegetable : MonoBehaviour
     Slider CountBar;
     private void Awake()
     {
-        Initializing();
-
-        myCamera = Camera.main;
-
-        Vector3 sliderPos= myCamera.WorldToScreenPoint(this.transform.position + new Vector3(0, 0.5f, 0));
-        Vector3 CountPos = myCamera.WorldToScreenPoint(this.transform.position + new Vector3(0, 0.4f, 0));
-
-        growBar = Instantiate(growthBar, sliderPos, Quaternion.identity, GameObject.Find("DefenseUI").transform);
-        CountBar = Instantiate(waterCountBar, CountPos, Quaternion.identity, GameObject.Find("DefenseUI").transform);
-        CountBar.transform.GetChild(1).GetChild(0).GetComponent<Image>().color = Color.cyan;
-
-        growBar.maxValue = 1;
-        growBar.minValue = 0;
-        growBar.value = 0;
-
-        CountBar.maxValue = WaterCount;
-        CountBar.minValue = 0;
-        CountBar.value = 0;
-        DefenseUIManager.INSTANCE.SliderBarList.Add(growBar);
-        DefenseUIManager.INSTANCE.SliderBarList.Add(CountBar);
-    }
-
-    private void OnEnable()
-    {
-        growBar.value = 0;
-        CountBar.value = 0;
-        CountBar.transform.GetChild(1).GetChild(0).GetComponent<Image>().color = Color.cyan;
-        growBar.gameObject.SetActive(true);
-        CountBar.gameObject.SetActive(true);
-    }
-
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.V))
+        if (GameManager.INSTANCE.SCENENUM == 1)
         {
-            //PhotonInstVegetable();
+            Initializing();
+
+            myCamera = Camera.main;
+
+            Vector3 sliderPos = myCamera.WorldToScreenPoint(this.transform.position + new Vector3(0, 0.5f, 0));
+            Vector3 CountPos = myCamera.WorldToScreenPoint(this.transform.position + new Vector3(0, 0.4f, 0));
+
+            if (!GameManager.INSTANCE.ISGAMEIN)
+            {
+                growBar = Instantiate(growthBar, sliderPos, Quaternion.identity, GameObject.Find("DefenseUI").transform);
+                CountBar = Instantiate(waterCountBar, CountPos, Quaternion.identity, GameObject.Find("DefenseUI").transform);
+                CountBar.transform.GetChild(1).GetChild(0).GetComponent<Image>().color = Color.cyan;
+            }
+
+            //growBar.maxValue = 1;
+            //growBar.minValue = 0;
+            //growBar.value = 0;
+
+            CountBar.maxValue = WaterCount;
+            CountBar.minValue = 0;
+            CountBar.value = 0;
+            DefenseUIManager.INSTANCE.SliderBarList.Add(growBar);
+            DefenseUIManager.INSTANCE.SliderBarList.Add(CountBar);
         }
     }
-
-
-
-
 
     void Initializing()
     {

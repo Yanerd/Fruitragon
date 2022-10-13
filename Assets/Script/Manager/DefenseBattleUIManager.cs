@@ -11,7 +11,8 @@ using System.Threading;
 public class DefenseBattleUIManager : MonoBehaviour
 {
 
-
+    //DefenseEndUI
+    [SerializeField] GameObject defenseEndUI = null;
 
     // Defense User
     #region Defense User
@@ -39,11 +40,15 @@ public class DefenseBattleUIManager : MonoBehaviour
 
 
 
-
+    Transform camTransfrom = null;
 
 
     private void Awake()
     {
+        camTransfrom = GameObject.Find("DEFMainCamera(Clone)").GetComponent<Transform>();
+        camTransfrom.position = new Vector3(-2.72f, 4.25f, -2.72f);
+        camTransfrom.rotation = Quaternion.Euler(30, 45, 0);
+
         playTimeText = GameObject.Find("PlayTime_number").GetComponent<TextMeshProUGUI>();
         stamina_Slider = GameObject.Find("Stamina_Slider").GetComponent<Slider>();
 
@@ -62,6 +67,8 @@ public class DefenseBattleUIManager : MonoBehaviour
 
     private void Start()
     {
+        defenseEndUI.SetActive(false);
+
         GameManager.INSTANCE.TimerStart();
 
         // 만약 게임 오버 상태일 경우 시간 멈춤
@@ -82,7 +89,13 @@ public class DefenseBattleUIManager : MonoBehaviour
 
 
     private void Update()
-    {        
+    {
+        if (GameManager.INSTANCE.ISDEAD || GameManager.INSTANCE.ISTIMEOVER)
+        {
+            defenseEndUI.SetActive(true);
+        }
+        
+
 
         // 플레이 타임 텍스트로 받아오기
         playTimeText.text = ((int)GameManager.INSTANCE.GAMETIME).ToString();
@@ -144,6 +157,13 @@ public class DefenseBattleUIManager : MonoBehaviour
         }
     }
     #endregion
+
+    public void OnBackButton()
+    {
+        Time.timeScale = 1f;
+        Photon.Pun.PhotonNetwork.LoadLevel("2_DefenseScene");
+        Photon.Pun.PhotonNetwork.Disconnect();
+    }
 
 }
 

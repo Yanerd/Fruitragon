@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public delegate void OnAttackStartEvent();
 public delegate void OnAttackEndEvent();
 
@@ -23,6 +24,9 @@ public class EventReciever : MonoBehaviour
     public OnPlayerHPChangeEvent callBackPlayerHPChangeEvent = null;
 
     public OnDragonHPChangeEvent callBackDragonHPChangeEvent = null;
+
+
+   
 
     public void AttackStartEvent()
     {
