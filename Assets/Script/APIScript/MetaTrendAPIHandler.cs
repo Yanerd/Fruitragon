@@ -142,7 +142,10 @@ public class MetaTrendAPIHandler : MonoSingleTon<MetaTrendAPIHandler>
     // Zera ¿‹∞Ì »Æ¿Œ
     public void ZeraBalance()
     {
-        StartCoroutine(processRequestZeraBalance());
+        if (USERNAME != null)
+        {
+            StartCoroutine(processRequestZeraBalance());
+        }
     }
 
     IEnumerator processRequestZeraBalance()
@@ -292,12 +295,12 @@ public class MetaTrendAPIHandler : MonoSingleTon<MetaTrendAPIHandler>
 
         Res_GetUserProfile res_getUserProfile = JsonUtility.FromJson<Res_GetUserProfile>(www.downloadHandler.text);
         callback(res_getUserProfile);
-        USERNAME = res_getUserProfile.userProfile.username;
-        WALLETADRESS = res_getUserProfile.userProfile.public_address;
-        SESSIONID = resGetSessionID.sessionId;
-
-
-
+        if (res_getUserProfile != null)
+        {
+            USERNAME = res_getUserProfile.userProfile.username;
+            WALLETADRESS = res_getUserProfile.userProfile.public_address;
+            SESSIONID = resGetSessionID.sessionId;
+        }
     }
 
     /// <summary>

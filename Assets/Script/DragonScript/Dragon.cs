@@ -7,7 +7,7 @@ using Photon.Realtime;
 
 public class Dragon : MonoBehaviourPun
 {
-
+    public bool testMode;
     // delegate
     public EventReciever dragonEvent = null;
 
@@ -113,25 +113,12 @@ public class Dragon : MonoBehaviourPun
             Face.SetActive(true);
             Hit_Face.SetActive(false);
 
-        // 타겟 오브젝트 첫 위치지정 및 생성(프리팹, 위치, 회전)
-        //if (GameManager.INSTANCE.ISGAMEIN)
-        //{
-        //    if (photonView.IsMine) 
-        //    {
-        //        Debug.Log("내꺼임");
-        //        newObj = PhotonNetwork.Instantiate(targetObjectPrefab.name, new Vector3(this.transform.position.x + RandXpos, 0f, this.transform.position.z + RandZpos), Quaternion.identity);
-        //    }
-        //}
-        //else
-        //{
-        
-        newObj = Instantiate(targetObjectPrefab, new Vector3(this.transform.position.x + RandXpos, 0f, this.transform.position.z + RandZpos), Quaternion.identity, Level.transform);
-        
-          
-            
+        if (testMode == false)
+        {
+            newObj = Instantiate(targetObjectPrefab, new Vector3(this.transform.position.x + RandXpos, 0f, this.transform.position.z + RandZpos), Quaternion.identity, Level.transform);
+        }
 
-        //}
-
+        GameManager.INSTANCE.AllDragonCount(this.gameObject);
 
 
     }
@@ -193,7 +180,14 @@ public class Dragon : MonoBehaviourPun
     // HIT -> 포톤 동기화
     public void CallDragonTransferDamage(float attackPower)
     {
-        photonView.RPC("DragonTransferDamage", RpcTarget.All, attackPower);
+        if (testMode)
+        {
+            DragonTransferDamage(attackPower);
+        }
+        else
+        {
+            photonView.RPC("DragonTransferDamage", RpcTarget.All, attackPower);
+        }
     }
 
     [PunRPC]
@@ -239,6 +233,7 @@ public class Dragon : MonoBehaviourPun
 
     void FindObject()
     {
+        if (testMode) return;
         // 드래곤과 오브젝트의 거리 재기 - 범위 계산을 해주기 위한 값
         TargetObjectToDragon = Vector3.Distance(transform.position, newObj.transform.position);
         // 오브젝트로 갈 방향 - 룩앳으로 회전값을 넣어주기 위한 값

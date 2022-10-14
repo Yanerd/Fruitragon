@@ -45,8 +45,6 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
         BuildingScrollOpenButton = GameObject.Find("BuildingScrollOpenButton");
         BuildingScrollCloseButton = GameObject.Find("BuildingScrollCloseButton");
 
-
-
         BuildingScrollCloseButton.SetActive(false);
 
         for (int i = 0; i < GameObject.Find("VegetableButton").transform.childCount; i++)
@@ -59,7 +57,7 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
         BulidingModeMenu.SetActive(false);
 
         //StorePage/////////////////////////////////////////////////
-        StorePage = GameObject.Find("StorePage");
+        StorePage = GameObject.Find("ShopPage");
 
         StoreVegetablePage = GameObject.Find("StoreVegetablePage");
         VegetableScrollView = StoreVegetablePage.transform.GetChild(1);
@@ -164,15 +162,7 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
 
     #region Dragon Data
 
-    #region Dragon List
-
-   public List<GameObject> potatoDragonList = new List<GameObject>();
-   public List<GameObject> appleDragonList = new List<GameObject>();
-   public List<GameObject> cabbageDragonList = new List<GameObject>();
-   public List<GameObject> carrotDragonList = new List<GameObject>();
-   public List<GameObject> eggplantDragonList = new List<GameObject>();
-
-    #endregion
+    
 
     [SerializeField] DragonData[] dragonData = new DragonData[5];
     [SerializeField] VegetableData[] vegetableData = new VegetableData[5];
@@ -265,14 +255,6 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
             wellCount = 10;
         }
 
-
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-           
-        }
-
-
-
     }
 
     //Value Reset 
@@ -296,23 +278,23 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
     {
         curGroundState.GetComponent<TextMeshProUGUI>().text = MapState.ToString();
 
-        PotatoCount.GetComponent<TextMeshProUGUI>().text = potatoDragonList.Count.ToString();
-        AppleCount.GetComponent<TextMeshProUGUI>().text = appleDragonList.Count.ToString();
-        CabbageCount.GetComponent<TextMeshProUGUI>().text = cabbageDragonList.Count.ToString();
-        CarrotCount.GetComponent<TextMeshProUGUI>().text = carrotDragonList.Count.ToString();
-        EggplantCount.GetComponent<TextMeshProUGUI>().text = eggplantDragonList.Count.ToString();
+        PotatoCount.GetComponent<TextMeshProUGUI>().text    = GameManager.INSTANCE.potatoDragonList.Count.ToString();
+        AppleCount.GetComponent<TextMeshProUGUI>().text     = GameManager.INSTANCE.appleDragonList.Count.ToString();
+        CabbageCount.GetComponent<TextMeshProUGUI>().text   = GameManager.INSTANCE.cabbageDragonList.Count.ToString();
+        CarrotCount.GetComponent<TextMeshProUGUI>().text    = GameManager.INSTANCE.carrotDragonList.Count.ToString();
+        EggplantCount.GetComponent<TextMeshProUGUI>().text  = GameManager.INSTANCE.eggplantDragonList.Count.ToString();
 
         curHouseCount.GetComponent<TextMeshProUGUI>().text = houseCount.ToString();
         curWellCount.GetComponent<TextMeshProUGUI>().text = wellCount.ToString();
 
-        curPotato.text = "Poato : " + potatoSeedCount.ToString();
-        curApple.text = "Apple : " + appleSeedCount.ToString();
-        curCarrot.text = "Carrot : " + carrotSeedCount.ToString();
-        curCabbage.text = "Cabbage : " + cabbageSeedCount.ToString();
+        curPotato.text   = "Poato : " + potatoSeedCount.ToString();
+        curApple.text    = "Apple : " + appleSeedCount.ToString();
+        curCarrot.text   = "Carrot : " + carrotSeedCount.ToString();
+        curCabbage.text  = "Cabbage : " + cabbageSeedCount.ToString();
         curEggplant.text = "Eggplant : " + eggplantSeedCount.ToString();
-        curWell.text = "Well : " + wellCount.ToString();
-        curHouse.text = "House : " + houseCount.ToString();
-        GameMoney.text = Gold.ToString();
+        curWell.text     = "Well : " + wellCount.ToString();
+        curHouse.text    = "House : " + houseCount.ToString();
+        GameMoney.text   = Gold.ToString();
 
         PotatoSeedCount.text = "Seed : " + potatoSeedCount;
         AppleSeedCount.text = "Seed : " + appleSeedCount;
@@ -549,13 +531,11 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
     {
         while (true)
         {
-            page.transform.position =
-                Vector3.Lerp(page.transform.position, page.transform.position + new Vector3(0, 100f, 0), Time.deltaTime * 20f);
+            page.transform.position = Vector3.Lerp(page.transform.position, page.transform.position + new Vector3(0, 100f, 0), Time.deltaTime * 20f);
             yield return null;
 
             if (page.transform.position.y >= 540f)
             {
-
                 yield break;
             }
         }
@@ -622,57 +602,69 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
     #region SellObject
     public void SellPotatoDragon()
     {
-        if (potatoDragonList.Count == 0) return;
+        if (GameManager.INSTANCE.DragonCount("D_Potatagon") == 0) return;
 
+        //gold calculation
         Gold += dragonData[0].SalePrice;
         GameMoney.text = Gold.ToString();
 
-        ObjectPoolingManager.inst.Destroy(potatoDragonList[0]);
-        potatoDragonList.RemoveAt(0);
-        BringObjectCount();
+        //bring instance list 
+        List<GameObject> instList = new List<GameObject>();
+        GameManager.INSTANCE.dragonTable.TryGetValue("D_Potatagon", out instList);
+
+        //remove obj and list
+        Destroy(instList[0]);
+        GameManager.INSTANCE.RemoveDragonCount("D_Potatagon");
+
+
+        //생성할때 text에 연결해줘야함
+        //리스트는 정상동작하고있음
+        //text update 확인해주기
+        PotatoCount.GetComponent<TextMeshProUGUI>().text = GameManager.INSTANCE.DragonCount("D_Potatagon").ToString();
     }
+
     public void SellAppleDragon()
     {
-        if (appleDragonList.Count == 0) return;
+        if (GameManager.INSTANCE.appleDragonList.Count == 0) return;
 
         Gold += dragonData[1].SalePrice;
         GameMoney.text = Gold.ToString();
 
-        ObjectPoolingManager.inst.Destroy(appleDragonList[0]);
-        appleDragonList.RemoveAt(0);
+        ObjectPoolingManager.inst.Destroy(GameManager.INSTANCE.appleDragonList[0]);
+        GameManager.INSTANCE.appleDragonList.RemoveAt(0);
         BringObjectCount();
     }
     public void SellCabbageDragon()
     {
-        if (cabbageDragonList.Count == 0) return;
+        if (GameManager.INSTANCE.cabbageDragonList.Count == 0) return;
 
         Gold += dragonData[2].SalePrice;
         GameMoney.text = Gold.ToString();
 
-        ObjectPoolingManager.inst.Destroy(cabbageDragonList[0]);
-        cabbageDragonList.RemoveAt(0);
+        ObjectPoolingManager.inst.Destroy(GameManager.INSTANCE.cabbageDragonList[0]);
+        GameManager.INSTANCE.cabbageDragonList.RemoveAt(0);
         BringObjectCount();
     }
     public void SellCarrotDragon()
     {
-        if (carrotDragonList.Count == 0) return;
+        if (GameManager.INSTANCE.carrotDragonList.Count == 0) return;
 
         Gold += dragonData[3].SalePrice;
         GameMoney.text = Gold.ToString();
 
-        ObjectPoolingManager.inst.Destroy(carrotDragonList[0]);
-        carrotDragonList.RemoveAt(0);
+        ObjectPoolingManager.inst.Destroy(GameManager.INSTANCE.carrotDragonList[0]);
+        GameManager.INSTANCE.carrotDragonList.RemoveAt(0);
         BringObjectCount();
     }
     public void SellEggplantDragon()
     {
-        if (eggplantDragonList.Count == 0) return;
+        if (GameManager.INSTANCE.eggplantDragonList.Count == 0) return;
 
         Gold += dragonData[4].SalePrice;
         GameMoney.text = Gold.ToString();
 
-        ObjectPoolingManager.inst.Destroy(eggplantDragonList[0]);
-        eggplantDragonList.RemoveAt(0);
+        ObjectPoolingManager.inst.Destroy(GameManager.INSTANCE.eggplantDragonList[0]);
+        GameManager.INSTANCE.eggplantDragonList.RemoveAt(0);
         BringObjectCount();
     }
     #endregion
@@ -782,7 +774,7 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
     {
         if (onMenu)
         {
-            DownStorePage();
+            OnShopExitButton();
             return;
         }
         onMenu = true;
@@ -791,7 +783,6 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
         BuildingScrollView.gameObject.SetActive(false);
         GroundScrollView.gameObject.SetActive(false);
 
-        BringObjectCount();
         StartCoroutine(Uptrans(StorePage));
 
         for (int i = 0; i < SliderBarList.Count; i++)
@@ -800,7 +791,7 @@ public class DefenseUIManager : MonoSingleTon<DefenseUIManager>
         }
 
     }
-    public void DownStorePage()
+    public void OnShopExitButton()
     {
         if (!onMenu) return;
         if (onMenu)

@@ -6,6 +6,7 @@ using Photon.Realtime;
 
 public class PlayerController : MonoBehaviourPun
 {
+    [SerializeField] bool testMode = false;
 
     #region components
     Transform playerTransform = null;
@@ -71,7 +72,7 @@ public class PlayerController : MonoBehaviourPun
 
     private void Awake()
     {
-        if (photonView.IsMine)
+        if (testMode || photonView.IsMine )
         {
             #region ref components
             playerTransform = this.GetComponent<Transform>();
@@ -93,10 +94,11 @@ public class PlayerController : MonoBehaviourPun
 
     private void Start()
     {
-        #region initializing
-        //invader client
-        if (photonView.IsMine)
+        if (testMode || photonView.IsMine)
         {
+            #region initializing
+            //invader client
+
             StartCoroutine(FindCamera());
 
             //live dragon list init
@@ -135,12 +137,20 @@ public class PlayerController : MonoBehaviourPun
     {
         while (true)
         {
-            if (photonView.IsMine)
+            if (testMode || photonView.IsMine)
             {
                 Debug.Log("카메라 찾는 중");
                 if (camTransfrom==null)
                 {
-                    camTransfrom = GameObject.Find("CameraArm(Clone)").GetComponent<Transform>();
+                    if (testMode == true)
+                    {
+                        camTransfrom = GameObject.Find("CameraArm").GetComponent<Transform>();
+                    }
+                    else
+                    {
+                        camTransfrom = GameObject.Find("CameraArm(Clone)").GetComponent<Transform>();
+                    }
+
                     weaponCollider = GameObject.Find("WeaponCollider");
                     if (camTransfrom != null)
                     {
@@ -163,7 +173,7 @@ public class PlayerController : MonoBehaviourPun
     {
         if (GameManager.INSTANCE.ISDEAD || GameManager.INSTANCE.ISTIMEOVER) return;
 
-        if (photonView.IsMine)
+        if (testMode || photonView.IsMine)
         {
             CamTransFormControll();
             InputControll();
@@ -431,8 +441,15 @@ public class PlayerController : MonoBehaviourPun
 
     public void CallPlayerTransferDamage(float damage)
     {
-        Debug.Log("데미지 받음");
-        photonView.RPC("PlayerTransferDamage", RpcTarget.All, damage);
+        if (testMode)
+        {
+            PlayerTransferDamage(damage);
+        }
+        else
+        {
+            Debug.Log("데미지 받음");
+            photonView.RPC("PlayerTransferDamage", RpcTarget.All, damage);
+        }
     }
 
     [PunRPC]

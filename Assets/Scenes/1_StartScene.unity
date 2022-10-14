@@ -2214,7 +2214,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectedBettingID: 
-  API_KEY: 2wobch3OIhO4iWImGFpDAX
+  API_KEY: 5f3xufKK7tTPeATcC48CS2
   FullAppsProductionURL: https://odin-api.browseosiris.com
   FullAppsStagingURL: https://odin-api-sat.browseosiris.com
 --- !u!114 &1582866640

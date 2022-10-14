@@ -228,23 +228,23 @@ public class Vegetable : MonoBehaviour
 
         if (prefabId == "D_Potatagon")
         {
-            DefenseUIManager.INSTANCE.potatoDragonList.Add(instDragon);
+            GameManager.INSTANCE.potatoDragonList.Add(instDragon);
         }
         else if(prefabId == "D_Appleagon")
         {
-            DefenseUIManager.INSTANCE.appleDragonList.Add(instDragon);
+            GameManager.INSTANCE.appleDragonList.Add(instDragon);
         }
         else if (prefabId == "D_Carrotagon")
         {
-            DefenseUIManager.INSTANCE.carrotDragonList.Add(instDragon);
+            GameManager.INSTANCE.carrotDragonList.Add(instDragon);
         }
         else if (prefabId == "D_Cabbagon")
         {
-            DefenseUIManager.INSTANCE.cabbageDragonList.Add(instDragon);
+            GameManager.INSTANCE.cabbageDragonList.Add(instDragon);
         }
         else if (prefabId == "D_Eggplagon")
         {
-            DefenseUIManager.INSTANCE.eggplantDragonList.Add(instDragon);
+            GameManager.INSTANCE.eggplantDragonList.Add(instDragon);
         }
 
     }
@@ -255,10 +255,4 @@ public class Vegetable : MonoBehaviour
         yield return new WaitForSeconds(5f);
         Effect.gameObject.SetActive(false);
     }
-
-   
-
-
-
-
 }

@@ -33,7 +33,17 @@ public class GameManager : MonoSingleTon<GameManager>
     public float GAMETIME { get; set; }
     public int STEALCOIN { get; set; }
     public bool ISTIMEOVER { get; set; }
-    #endregion 
+    #endregion
+
+    #region Dragon List
+
+    public List<GameObject> potatoDragonList = new List<GameObject>();
+    public List<GameObject> appleDragonList = new List<GameObject>();
+    public List<GameObject> cabbageDragonList = new List<GameObject>();
+    public List<GameObject> carrotDragonList = new List<GameObject>();
+    public List<GameObject> eggplantDragonList = new List<GameObject>();
+
+    #endregion
 
     Coroutine timerCoroutine = null;
 
@@ -143,4 +153,70 @@ public class GameManager : MonoSingleTon<GameManager>
         //real steal coin calculation
         GameManager.INSTANCE.STEALCOIN = (int)(killCoinPoint + saboCoinPoint);
     }
+
+    #region Dragon Dictionary
+    // Dictionary 로 바꾸기
+    public Dictionary<string, List<GameObject>> dragonTable = new Dictionary<string, List<GameObject>>();
+
+    // 드래곤이 처음 출현했을 때 -> Awake
+    public void AllDragonCount(GameObject obj)
+    {
+        List<GameObject> list = null;
+
+        string prefabId = obj.name.Replace("(Clone)", "");
+        bool listCheck = dragonTable.TryGetValue(prefabId, out list);
+
+
+        if (listCheck == false) // 이 이름의 리스트가 없을 때
+        {
+            list = new List<GameObject>(); // 새로 리스트 생성 -> 해당하는 키값의 리스트를 만들어줌            
+            GameManager.INSTANCE.dragonTable.Add(prefabId, list); // list를 dictionary 안에 넣기
+
+        }
+        list.Add(obj); // dictionary 안에 있는 list에 prefab을 넣음
+
+    }
+
+    // 드래곤이 판매가 되었을 때
+    public void RemoveDragonCount(string name)
+    {
+
+        List<GameObject> list;
+
+        //string prefabId = name.Replace("(Clone)", "");
+        bool listCheck = GameManager.INSTANCE.dragonTable.TryGetValue(name, out list);
+
+        if (listCheck == false)
+        {
+            Debug.LogError("Not Found " + name);
+            return;
+        }
+
+        // 리스트가 있을 때 드래곤 지움
+        list.RemoveAt(0);
+    }
+
+    // 드래곤 카운트 세는 함수
+    public int DragonCount(string name)
+    {
+        List<GameObject> list;
+
+        string prefabId = name.Replace("(Clone)", "");
+        bool listCheck = GameManager.INSTANCE.dragonTable.TryGetValue(prefabId, out list);
+
+        int dragonCount = 0;
+
+        if (listCheck == true)
+        {
+            dragonCount = list.Count;
+            return dragonCount;
+        }
+        return 0;
+    }
+
+    public void DragonTableClear()
+    {
+        GameManager.INSTANCE.dragonTable.Clear();
+    }
+    #endregion
 }
