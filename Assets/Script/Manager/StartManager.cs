@@ -58,7 +58,7 @@ public class StartManager : MonoBehaviour
 
             if (operation.isDone && PhotonManager.INSTANCE.testName != null)
             {
-                SaveLoadManager.INSTANCE.Load();
+                SaveLoadManager.INSTANCE.InitLoad();
                 startButton.interactable = true;
                 PhotonManager.INSTANCE.OnIPButton();
                 PhotonManager.INSTANCE.OnSRButton();
